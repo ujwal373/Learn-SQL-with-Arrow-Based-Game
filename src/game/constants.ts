@@ -8,15 +8,23 @@ export const DIRECTION_DELTAS: Record<Direction, { dr: number; dc: number }> = {
   right: { dr: 0, dc: 1 },
 }
 
-// Open decision 2: tapping a blocked arrow shakes it and costs a small amount of score.
-// No life is lost. Set this to 0 for a shake only version.
-export const BLOCKED_TAP_SCORE_PENALTY = 25
+// Lives belong to a game (a run), not to a level. They carry over from level to level.
+export const LIVES_PER_GAME = 3
 
-// Temporary scoring until step 4 adds combo and lives.
+// Tapping an arrow that is blocked by another arrow costs this many lives.
+export const BLOCKED_TAP_LIVES_LOST = 1
+
+// Temporary scoring until step 4 adds the combo multiplier.
 export const CLEAR_ARROW_SCORE = 100
 
-// How long the fly off animation runs. The board passes this to CSS, so there is one source of truth.
-export const EXIT_ANIMATION_MS = 600
+// Each level includes this many free hints. After that every hint costs score.
+export const FREE_HINTS_PER_LEVEL = 2
+export const EXTRA_HINT_SCORE_COST = 50
+
+// Slide off animation speed in cells per second, with limits so tiny and huge boards both feel right.
+export const EXIT_SPEED_CELLS_PER_SEC = 32
+export const EXIT_MIN_MS = 350
+export const EXIT_MAX_MS = 1100
 
 // How long the blocked message and the red highlight on the blocking arrow stay visible.
-export const BLOCKED_FEEDBACK_MS = 1200
+export const FEEDBACK_MS = 1500

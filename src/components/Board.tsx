@@ -1,84 +1,105 @@
-import type { CSSProperties } from 'react'
-import { EXIT_ANIMATION_MS } from '../game/constants.ts'
-import type { BoardArrow, Direction } from '../game/types.ts'
-import ArrowIcon from './ArrowIcon.tsx'
+import { useImperativeHandle } from 'react'
+import type { Ref } from 'react'
+import type { Bounds } from '../game/arrow.ts'
+import type { BoardArrow } from '../game/types.ts'
+import ArrowShape from './ArrowShape.tsx'
+import { FitIcon, MinusIcon, PlusIcon } from './icons.tsx'
+import { useZoomPan } from './useZoomPan.ts'
 import '../styles/board.css'
+
+export interface BoardHandle {
+  // Moves the camera to a cell if it is off screen, used to show hints on large boards.
+  showCell: (row: number, col: number) => void
+}
 
 interface BoardProps {
   rows: number
   cols: number
   arrows: BoardArrow[]
-  // The blocked arrow that was just tapped, and the arrow that is in its way.
+  // The cells covered by the pattern when the level started. The camera starts zoomed to fit them.
+  focus: Bounds
+  // Changes whenever a new board is loaded, so the camera refits.
+  boardKey: string | number
+  hintId: string | null
+  // The arrow that was tapped while blocked, and the arrow that was in its way.
   shakeId: string | null
   blockerId: string | null
-  // Changes on every blocked tap so the shake animation can replay on the same arrow.
+  // Changes on every blocked tap so the shake can replay on the same arrow.
   shakeNonce: number
   onTap: (arrowId: string) => void
-}
-
-// Direction an arrow flies when it leaves the board.
-const EXIT_VECTORS: Record<Direction, { x: number; y: number }> = {
-  up: { x: 0, y: -1 },
-  down: { x: 0, y: 1 },
-  left: { x: -1, y: 0 },
-  right: { x: 1, y: 0 },
+  ref?: Ref<BoardHandle>
 }
 
 export default function Board({
   rows,
   cols,
   arrows,
+  focus,
+  boardKey,
+  hintId,
   shakeId,
   blockerId,
   shakeNonce,
   onTap,
+  ref,
 }: BoardProps) {
-  // Far enough, in cell widths, to leave the board from any starting cell.
-  const travel = Math.max(rows, cols) + 2
+  const zoom = useZoomPan(cols, rows, focus, boardKey, onTap)
 
-  const boardStyle = {
-    '--rows': rows,
-    '--cols': cols,
-    '--exit-ms': `${EXIT_ANIMATION_MS}ms`,
-  } as CSSProperties
+  useImperativeHandle(ref, () => ({
+    showCell: (row, col) => zoom.ensureVisible(col + 0.5, row + 0.5),
+  }))
 
   return (
-    <div className="board" style={boardStyle} role="group" aria-label="Arrow board">
-      {arrows.map((a) => {
-        const vector = EXIT_VECTORS[a.dir]
+    <div
+      className="board"
+      ref={zoom.containerRef}
+      onPointerDown={zoom.onPointerDown}
+      onPointerMove={zoom.onPointerMove}
+      onPointerUp={zoom.onPointerUp}
+      onPointerCancel={zoom.onPointerCancel}
+    >
+      {zoom.ready && (
+        <svg
+          ref={zoom.svgRef}
+          className="board__svg"
+          role="group"
+          aria-label="Arrow board. Scroll or pinch to zoom, drag to move."
+        >
+          <defs>
+            <pattern id="dots" width="1" height="1" patternUnits="userSpaceOnUse">
+              <circle cx="0.5" cy="0.5" r="0.07" className="board__dot" />
+            </pattern>
+          </defs>
+          <rect x="0" y="0" width={cols} height={rows} fill="url(#dots)" />
 
-        const classes = ['arrow']
-        if (a.status === 'exiting') classes.push('arrow--exiting')
-        // Two identical animations that alternate, so a repeat tap restarts the shake
-        // without remounting the button (remounting would drop keyboard focus).
-        if (a.id === shakeId) classes.push(shakeNonce % 2 === 0 ? 'arrow--shake-a' : 'arrow--shake-b')
-        if (a.id === blockerId) classes.push('arrow--blocker')
+          {arrows.map((arrow) => (
+            <ArrowShape
+              key={arrow.id}
+              arrow={arrow}
+              rows={rows}
+              cols={cols}
+              hinted={arrow.id === hintId}
+              blocker={arrow.id === blockerId}
+              shakeClass={
+                arrow.id === shakeId ? (shakeNonce % 2 === 0 ? 'arrow--shake-a' : 'arrow--shake-b') : ''
+              }
+              onActivate={onTap}
+            />
+          ))}
+        </svg>
+      )}
 
-        const style = {
-          left: `${(a.col / cols) * 100}%`,
-          top: `${(a.row / rows) * 100}%`,
-          width: `${100 / cols}%`,
-          height: `${100 / rows}%`,
-          '--dx': vector.x * travel,
-          '--dy': vector.y * travel,
-        } as CSSProperties
-
-        return (
-          <button
-            key={a.id}
-            type="button"
-            className={classes.join(' ')}
-            style={style}
-            disabled={a.status === 'exiting'}
-            aria-label={`Arrow in row ${a.row + 1}, column ${a.col + 1}, pointing ${a.dir}`}
-            onClick={() => onTap(a.id)}
-          >
-            <span className="arrow__face">
-              <ArrowIcon dir={a.dir} />
-            </span>
-          </button>
-        )
-      })}
+      <div className="zoom-controls">
+        <button type="button" className="icon-btn" onClick={zoom.zoomIn} aria-label="Zoom in">
+          <PlusIcon />
+        </button>
+        <button type="button" className="icon-btn" onClick={zoom.zoomOut} aria-label="Zoom out">
+          <MinusIcon />
+        </button>
+        <button type="button" className="icon-btn" onClick={zoom.fit} aria-label="Fit board to screen">
+          <FitIcon />
+        </button>
+      </div>
     </div>
   )
 }

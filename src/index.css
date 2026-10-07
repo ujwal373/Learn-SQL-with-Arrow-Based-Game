@@ -1,139 +1,200 @@
-/* Global styles. Theme tokens live here so the visual theme (open decision 1) is easy to change later. */
+/* Global styles and the two themes. The theme is chosen by data-theme on the html element,
+   which index.html sets before first paint and the theme button toggles. */
 :root {
-  --bg: #0f1220;
-  --panel: #181c30;
-  --tile: #232846;
-  --text: #e8ebf7;
-  --muted: #8a91b4;
-  --accent: #5eead4;
-  --danger: #fb7185;
-  --danger-tint: #4a2433;
+  color-scheme: light;
+  --bg: #f1f3fa;
+  --panel: #ffffff;
+  --board: #fbfbfe;
+  --ink: #14213d;
+  --text: #14213d;
+  --muted: #5b6486;
+  --line: #d6dbee;
+  --dot: rgba(20, 33, 61, 0.28);
+  --accent: #3b5bdb;
+  --accent-ink: #ffffff;
+  --danger: #e03131;
+  --hint: #f08c00;
+  --heart: #ef4444;
+  --shadow: 0 6px 24px rgba(20, 33, 61, 0.12);
 
-  color-scheme: dark;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color: var(--text);
   background: var(--bg);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b0e1a;
+  --panel: #151a2e;
+  --board: #10142a;
+  --ink: #d7defa;
+  --text: #e8ebf7;
+  --muted: #8b93b8;
+  --line: #262d4d;
+  --dot: rgba(215, 222, 250, 0.3);
+  --accent: #5eead4;
+  --accent-ink: #0b1f1c;
+  --danger: #fb7185;
+  --hint: #fbbf24;
+  --heart: #fb7185;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 body {
   margin: 0;
-  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  /* Stops pull to refresh and bounce scrolling from fighting the board gestures. */
+  overscroll-behavior: none;
 }
 
-.app {
-  max-width: 720px;
+/* Screen layout: top bar, status line, the board (takes all remaining height), bottom bar. */
+.game {
+  height: 100dvh;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 32px 16px 48px;
-  text-align: center;
-}
-
-.app h1 {
-  margin: 0 0 4px;
-  letter-spacing: 0.04em;
-  color: var(--accent);
-}
-
-.tagline {
-  margin: 0 0 20px;
-  color: var(--muted);
-}
-
-/* One column that holds the HUD, the board and the controls, so they share a width. */
-.stage {
-  width: min(92vw, 520px);
-  margin: 0 auto;
-}
-
-.hud {
+  padding: 10px 12px 8px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 8px;
-  margin-bottom: 8px;
 }
 
-.stat {
-  flex: 1;
-  padding: 8px 4px;
-  border-radius: 12px;
-  background: var(--panel);
+.topbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
 }
 
-.stat__label {
-  display: block;
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.topbar__side {
+  display: flex;
+  gap: 8px;
+}
+
+.topbar__side--right {
+  justify-content: flex-end;
+}
+
+.topbar__center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.level-label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   color: var(--muted);
 }
 
-.stat__value {
-  font-size: 1.3rem;
-  font-weight: 700;
+.hearts {
+  display: flex;
+  gap: 4px;
+}
+
+.heart {
+  display: block;
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.heart--full {
+  color: var(--heart);
+}
+
+.heart--empty {
+  color: var(--muted);
+  opacity: 0.55;
+  transform: scale(0.9);
+}
+
+.statline {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.statline strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Reserved height so the board does not jump when a message appears. */
 .feedback {
-  min-height: 1.5em;
-  margin: 0 0 8px;
+  min-height: 1.4em;
+  margin: 0;
+  text-align: center;
   font-size: 0.9rem;
+  font-weight: 600;
   color: var(--danger);
 }
 
 .board-wrap {
   position: relative;
+  flex: 1;
+  min-height: 0;
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: grid;
-  place-content: center;
-  gap: 8px;
-  border-radius: 20px;
-  background: rgba(15, 18, 32, 0.85);
-  backdrop-filter: blur(4px);
-}
-
-.overlay h2 {
-  margin: 0;
-  color: var(--accent);
-}
-
-.overlay p {
-  margin: 0 0 8px;
-  color: var(--muted);
-}
-
-.controls {
+.bottombar {
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
   gap: 8px;
-  margin-top: 16px;
+}
+
+/* Buttons */
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.icon-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.icon-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 .btn {
-  padding: 10px 18px;
-  border: 1px solid rgba(138, 145, 180, 0.4);
-  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
   background: var(--panel);
   color: var(--text);
   font: inherit;
+  font-weight: 600;
   cursor: pointer;
 }
 
 .btn:hover:not(:disabled) {
   border-color: var(--accent);
-}
-
-.btn:focus-visible {
-  outline: 3px solid var(--text);
-  outline-offset: 2px;
 }
 
 .btn:disabled {
@@ -144,15 +205,94 @@ body {
 .btn--primary {
   border-color: var(--accent);
   background: var(--accent);
-  color: #0b1f1c;
-  font-weight: 700;
+  color: var(--accent-ink);
 }
 
-.muted {
+.btn--hint {
+  border-color: var(--hint);
+}
+
+.btn__badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--hint);
+  color: #1f1400;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.icon-btn:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Cards that sit on top of the board: level cleared, game over, paused. */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(5px);
+}
+
+.overlay__card {
+  width: min(340px, 100%);
+  padding: 24px 20px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.overlay__card h2 {
+  margin: 0 0 6px;
+  font-size: 1.5rem;
+}
+
+.overlay__card p {
+  margin: 0 0 16px;
   color: var(--muted);
 }
 
-.note {
-  margin-top: 16px;
+.overlay__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.overlay__actions .btn {
+  justify-content: center;
+}
+
+.dev {
   font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.dev summary {
+  cursor: pointer;
+}
+
+.dev__buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.dev .btn {
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 520px) {
+  .btn {
+    padding: 0 14px;
+  }
 }

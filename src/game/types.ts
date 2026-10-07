@@ -2,15 +2,21 @@
 
 export type Direction = 'up' | 'down' | 'left' | 'right'
 
-export interface Arrow {
-  id: string
+export interface Cell {
   row: number
   col: number
+}
+
+// An arrow is a snake: a path of orthogonally connected cells ordered from tail to head.
+// It points the way its last segment points, and that is the way it slides out of the board.
+export interface Arrow {
+  id: string
+  cells: Cell[]
   dir: Direction
 }
 
-// An arrow as shown on screen. An exiting arrow has already been cleared and is
-// only playing its fly off animation, so it no longer blocks anything.
+// An exiting arrow has already been cleared and is only playing its slide off animation,
+// so it no longer blocks anything.
 export type ArrowStatus = 'active' | 'exiting'
 
 export interface BoardArrow extends Arrow {

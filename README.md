@@ -1,32 +1,45 @@
 # QueryOut
 
-A browser based SQL learning game. Tap an arrow that has a clear path, finish the SQL query to send it flying off the board, and clear every arrow to beat the level.
+A browser based SQL learning game. Tap an arrow that has a clear path, finish the SQL query to send it sliding off the board, and clear the whole pattern to beat the level. Each level adds more arrows on a bigger grid, and the SQL gets harder.
 
-Status: early build. Steps 1 and 2 of 8 are complete (project setup, arrow board). SQL challenges arrive in step 3, so for now a tap on a clear arrow removes it directly.
+Status: early build. Steps 1 and 2 of 8 are complete (project setup and the arrow board). SQL challenges arrive in step 3, so for now a tap on a free arrow removes it directly.
 
 ## Stack
 
 Vite, React, TypeScript. SQL checking with sql.js in the browser. Hosting on Vercel. Question bank and leaderboard in Google Sheets through serverless functions.
 
-## How the board works
+## How it plays
 
-1. An arrow can leave the board only if every cell between it and the edge, in the direction it points, is empty. Tapping a blocked arrow shakes it, highlights the arrow in its way, and costs a small score penalty (no life is lost).
-2. Levels are generated from the level number, so the same level is always the same board.
-3. Every generated board is solvable. Arrows are placed one at a time, and each new arrow must have a clear path at the moment it is placed. Clearing arrows in reverse placement order therefore always works, so deadlocks such as two arrows pointing at each other cannot occur. Tests check this for the first 40 levels.
-4. Difficulty follows the level plan: 4 to 6 arrows on levels 1 to 3, up to 12 arrows by level 9, and 12 or more from level 10, with the grid growing from 5 by 5 to 8 by 8.
+1. The board is a big dot grid with a symmetrical pattern of snake shaped arrows in the middle.
+2. An arrow can leave only if nothing is in the straight line ahead of its head. Start with the arrows on the outside and work inward.
+3. Tapping a blocked arrow costs a life. A game has 3 lives, shared across levels.
+4. Each level has 2 free hints. A hint highlights an arrow that is free to tap. More hints cost 50 points.
+5. Zoom with the mouse wheel, a pinch, or the plus and minus buttons. Drag to move around. The fit button returns to the full pattern.
+6. Light and dark themes, switchable at the bottom right.
+
+More detail in docs/game-design.md.
+
+## How levels are built
+
+1. A shape (square, circle, cross, ring or diamond) is chosen for one quadrant, and the number of cells it covers rises every level.
+2. The quadrant is filled with snakes, placed from the center outward.
+3. Each snake is mirrored left to right and top to bottom, so the pattern is symmetrical.
+4. A snake is accepted only if its head has a clear path at the moment it is placed. Clearing the arrows in reverse placement order always works, so no level can be deadlocked. Tests check this for the first 45 levels.
+5. The same level number always gives the same board.
 
 ## Repo layout
 
 ```
 api/                 Vercel serverless functions (questions, leaderboard)
-docs/                Design notes, level plan, demo GIF plan
+docs/                Game design notes, level plan, demo GIF plan
 public/              Static assets
-src/components/      React UI: Board, ArrowIcon
-src/game/            Blocking rules, level generator, constants, tests
+src/components/      Board, ArrowShape, zoom and pan hook, icons
+src/game/            Arrow model, blocking rules, level generator, constants, tests
 src/sql/             sql.js loading and query validation (step 3)
 src/storage/         GameStorage interface (swap Sheets for Supabase later)
 src/data/fallback/   Bundled JSON used when the network or Sheets is unavailable
 src/styles/          Board styles
+src/theme.ts         Light and dark theme hook
 ```
 
 ## Run locally
@@ -48,4 +61,4 @@ npm run preview   Preview the production build
 
 ## Tuning
 
-Game feel values live in src/game/constants.ts: the blocked tap penalty, the points per cleared arrow, and the fly off animation time.
+Game feel values live in src/game/constants.ts: lives per game, lives lost on a blocked tap, free hints per level, hint cost, points per cleared arrow, and the slide animation speed. Level growth lives in getLevelConfig in src/game/levels.ts.
