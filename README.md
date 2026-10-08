@@ -2,7 +2,7 @@
 
 A browser based SQL learning game. Tap an arrow that has a clear path, finish the SQL query to send it sliding off the board, and clear the whole pattern to beat the level. Each level adds more arrows on a bigger grid, and the SQL gets harder.
 
-Status: early build. Steps 1 and 2 of 8 are complete (project setup and the arrow board). SQL challenges arrive in step 3, so for now a tap on a free arrow removes it directly.
+Status: early build. Steps 1 to 3 of 8 are complete (project setup, the arrow board and the SQL challenges). Combo scoring, the Google Sheets question bank and the leaderboard come next.
 
 ## Stack
 
@@ -12,7 +12,7 @@ Vite, React, TypeScript. SQL checking with sql.js in the browser. Hosting on Ver
 
 1. The board is a big dot grid with a symmetrical pattern of snake shaped arrows in the middle.
 2. An arrow can leave only if nothing is in the straight line ahead of its head. Start with the arrows on the outside and work inward.
-3. Tapping a blocked arrow costs a life. A game has 3 lives, shared across levels.
+3. Tapping a free arrow opens a SQL challenge. A correct answer fires the arrow. A wrong answer costs a life. Tapping a blocked arrow also costs a life. A game has 3 lives, shared across levels.
 4. Each level has 2 free hints. A hint highlights an arrow that is free to tap. More hints cost 50 points.
 5. Zoom with the mouse wheel, a pinch, or the plus and minus buttons. Drag to move around. The fit button returns to the full pattern.
 6. Light and dark themes, switchable at the bottom right.
@@ -33,12 +33,12 @@ More detail in docs/game-design.md.
 api/                 Vercel serverless functions (questions, leaderboard)
 docs/                Game design notes, level plan, demo GIF plan
 public/              Static assets
-src/components/      Board, ArrowShape, zoom and pan hook, icons
-src/game/            Arrow model, blocking rules, level generator, constants, tests
-src/sql/             sql.js loading and query validation (step 3)
+src/components/      Board, ArrowShape, challenge dialog, result table, zoom and pan hook, icons
+src/game/            Arrow model, blocking rules, level generator, curriculum, constants, tests
+src/sql/             sql.js loading and query checking
 src/storage/         GameStorage interface (swap Sheets for Supabase later)
 src/data/fallback/   Bundled JSON used when the network or Sheets is unavailable
-src/styles/          Board styles
+src/styles/          Board and challenge styles
 src/theme.ts         Light and dark theme hook
 ```
 

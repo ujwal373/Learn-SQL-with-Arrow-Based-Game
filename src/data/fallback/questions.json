@@ -1,1 +1,1513 @@
-[]
+[
+  {
+    "id": "t1-01",
+    "tier": 1,
+    "topic": "SELECT and FROM",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show every column of the students table.",
+    "template": "SELECT ___ FROM students",
+    "answers": [
+      "*"
+    ],
+    "wordBank": [
+      "*",
+      "name",
+      "ALL",
+      "students"
+    ],
+    "expectedSql": "SELECT * FROM students",
+    "orderMatters": false,
+    "hint": "A star stands for every column.",
+    "explanation": "SELECT * returns every column of the table."
+  },
+  {
+    "id": "t1-02",
+    "tier": 1,
+    "topic": "SELECT and FROM",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show only the name of every student.",
+    "template": "SELECT ___ FROM students",
+    "answers": [
+      "name"
+    ],
+    "wordBank": [
+      "name",
+      "*",
+      "names",
+      "students"
+    ],
+    "expectedSql": "SELECT name FROM students",
+    "orderMatters": false,
+    "hint": "Write the name of the column you want after SELECT.",
+    "explanation": "After SELECT you list the columns you want."
+  },
+  {
+    "id": "t1-03",
+    "tier": 1,
+    "topic": "SELECT and FROM",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show the name and the city of every student.",
+    "template": "SELECT name, ___ FROM students",
+    "answers": [
+      "city"
+    ],
+    "wordBank": [
+      "city",
+      "score",
+      "age",
+      "FROM"
+    ],
+    "expectedSql": "SELECT name, city FROM students",
+    "orderMatters": false,
+    "hint": "Columns are separated by commas.",
+    "explanation": "Several columns are separated by commas."
+  },
+  {
+    "id": "t1-04",
+    "tier": 1,
+    "topic": "SELECT and FROM",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show the title of every course.",
+    "template": "SELECT ___ ___ courses",
+    "answers": [
+      "title",
+      "FROM"
+    ],
+    "wordBank": [
+      "title",
+      "FROM",
+      "credits",
+      "WHERE",
+      "*"
+    ],
+    "expectedSql": "SELECT title FROM courses",
+    "orderMatters": false,
+    "hint": "The first blank is a column. The second one names where the data comes from.",
+    "explanation": "FROM says which table to read."
+  },
+  {
+    "id": "t1-05",
+    "tier": 1,
+    "topic": "SELECT and FROM",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show the name and the price of every product.",
+    "template": "SELECT ___, ___ FROM products",
+    "answers": [
+      "name",
+      "price"
+    ],
+    "wordBank": [
+      "name",
+      "price",
+      "category",
+      "stock"
+    ],
+    "expectedSql": "SELECT name, price FROM products",
+    "orderMatters": false,
+    "hint": "Pick the columns in the order the task asks for them.",
+    "explanation": "The columns come out in the order you list them."
+  },
+  {
+    "id": "t1-06",
+    "tier": 1,
+    "topic": "SELECT and FROM",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Show the name of every employee.",
+    "template": "SELECT ___ FROM ___",
+    "answers": [
+      "name",
+      "employees"
+    ],
+    "wordBank": [
+      "name",
+      "employees",
+      "departments",
+      "salary",
+      "*"
+    ],
+    "expectedSql": "SELECT name FROM employees",
+    "orderMatters": false,
+    "hint": "You need a column and a table.",
+    "explanation": "SELECT chooses columns and FROM chooses the table."
+  },
+  {
+    "id": "t1-07",
+    "tier": 1,
+    "topic": "SELECT and FROM",
+    "dataset": "shop",
+    "mode": "complete",
+    "prompt": "Show everything in the customers table.",
+    "template": "SELECT * FROM ",
+    "answers": [
+      "customers"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT * FROM customers",
+    "orderMatters": false,
+    "hint": "Type the name of the table.",
+    "explanation": "The table name goes after FROM."
+  },
+  {
+    "id": "t1-08",
+    "tier": 1,
+    "topic": "SELECT and FROM",
+    "dataset": "company",
+    "mode": "complete",
+    "prompt": "Show the name and the location of every department.",
+    "template": "SELECT name, location ",
+    "answers": [
+      "FROM departments"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT name, location FROM departments",
+    "orderMatters": false,
+    "hint": "Finish the query by saying which table to read.",
+    "explanation": "Every query needs a FROM to name its table."
+  },
+  {
+    "id": "t2-01",
+    "tier": 2,
+    "topic": "Filtering with WHERE",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show the names of students older than 21.",
+    "template": "SELECT name FROM students WHERE age ___ 21",
+    "answers": [
+      ">"
+    ],
+    "wordBank": [
+      ">",
+      "<",
+      "=",
+      "!="
+    ],
+    "expectedSql": "SELECT name FROM students WHERE age > 21",
+    "orderMatters": false,
+    "hint": "Older means a bigger number.",
+    "explanation": "WHERE keeps only the rows that pass the test."
+  },
+  {
+    "id": "t2-02",
+    "tier": 2,
+    "topic": "Filtering with WHERE",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show every student from Dublin.",
+    "template": "SELECT * FROM students ___ city = ___",
+    "answers": [
+      "WHERE",
+      "'Dublin'"
+    ],
+    "wordBank": [
+      "WHERE",
+      "'Dublin'",
+      "Dublin",
+      "HAVING",
+      "ORDER BY"
+    ],
+    "expectedSql": "SELECT * FROM students WHERE city = 'Dublin'",
+    "orderMatters": false,
+    "hint": "Text values go inside single quotes.",
+    "explanation": "Text must be written in single quotes, numbers are not."
+  },
+  {
+    "id": "t2-03",
+    "tier": 2,
+    "topic": "Filtering with WHERE",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show the name and score of students who scored at least 81.",
+    "template": "SELECT name, score FROM students WHERE score ___ 81",
+    "answers": [
+      ">="
+    ],
+    "wordBank": [
+      ">=",
+      ">",
+      "<=",
+      "="
+    ],
+    "expectedSql": "SELECT name, score FROM students WHERE score >= 81",
+    "orderMatters": false,
+    "hint": "At least means the same or more.",
+    "explanation": ">= means greater than or equal to."
+  },
+  {
+    "id": "t2-04",
+    "tier": 2,
+    "topic": "Filtering with WHERE",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show the names of Cork students who are older than 22.",
+    "template": "SELECT name FROM students WHERE city = 'Cork' ___ age > 22",
+    "answers": [
+      "AND"
+    ],
+    "wordBank": [
+      "AND",
+      "OR",
+      "NOT",
+      "WHERE"
+    ],
+    "expectedSql": "SELECT name FROM students WHERE city = 'Cork' AND age > 22",
+    "orderMatters": false,
+    "hint": "Both tests must be true at the same time.",
+    "explanation": "AND needs both tests to be true."
+  },
+  {
+    "id": "t2-05",
+    "tier": 2,
+    "topic": "Filtering with WHERE",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show the names of products that cost less than 50.",
+    "template": "SELECT name FROM products WHERE price ___ 50",
+    "answers": [
+      "<"
+    ],
+    "wordBank": [
+      "<",
+      ">",
+      "=",
+      "<>"
+    ],
+    "expectedSql": "SELECT name FROM products WHERE price < 50",
+    "orderMatters": false,
+    "hint": "Less than uses the small end of the arrow.",
+    "explanation": "< means less than."
+  },
+  {
+    "id": "t2-06",
+    "tier": 2,
+    "topic": "Filtering with WHERE",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show the names of products in the Furniture or Stationery category.",
+    "template": "SELECT name FROM products WHERE category = 'Furniture' ___ category = 'Stationery'",
+    "answers": [
+      "OR"
+    ],
+    "wordBank": [
+      "OR",
+      "AND",
+      "NOT",
+      "IN"
+    ],
+    "expectedSql": "SELECT name FROM products WHERE category = 'Furniture' OR category = 'Stationery'",
+    "orderMatters": false,
+    "hint": "A product has only one category, so it cannot be both.",
+    "explanation": "OR needs at least one test to be true."
+  },
+  {
+    "id": "t2-07",
+    "tier": 2,
+    "topic": "Filtering with WHERE",
+    "dataset": "company",
+    "mode": "complete",
+    "prompt": "Show the names of employees in department 1 who earn more than 95000.",
+    "template": "SELECT name FROM employees WHERE department_id = 1 ",
+    "answers": [
+      "AND salary > 95000"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT name FROM employees WHERE department_id = 1 AND salary > 95000",
+    "orderMatters": false,
+    "hint": "Add a second test with AND.",
+    "explanation": "AND joins two tests that must both be true."
+  },
+  {
+    "id": "t2-08",
+    "tier": 2,
+    "topic": "Filtering with WHERE",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show the names of customers who are not from Ireland.",
+    "template": "SELECT name FROM customers WHERE country ___ 'Ireland'",
+    "answers": [
+      "!="
+    ],
+    "wordBank": [
+      "!=",
+      "=",
+      "<",
+      ">"
+    ],
+    "expectedSql": "SELECT name FROM customers WHERE country != 'Ireland'",
+    "orderMatters": false,
+    "hint": "Not equal is written != in SQL.",
+    "explanation": "!= (or <>) means not equal."
+  },
+  {
+    "id": "t3-01",
+    "tier": 3,
+    "topic": "Sorting, LIMIT and DISTINCT",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show the names of students from the highest score to the lowest.",
+    "template": "SELECT name FROM students ORDER BY score ___",
+    "answers": [
+      "DESC"
+    ],
+    "wordBank": [
+      "DESC",
+      "ASC",
+      "DOWN",
+      "LIMIT"
+    ],
+    "expectedSql": "SELECT name FROM students ORDER BY score DESC",
+    "orderMatters": true,
+    "hint": "Sorting goes from small to big unless you say otherwise.",
+    "explanation": "DESC sorts from big to small. ASC, the default, goes from small to big."
+  },
+  {
+    "id": "t3-02",
+    "tier": 3,
+    "topic": "Sorting, LIMIT and DISTINCT",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show the name and price of the 3 cheapest products.",
+    "template": "SELECT name, price FROM products ORDER BY price ___ 3",
+    "answers": [
+      "LIMIT"
+    ],
+    "wordBank": [
+      "LIMIT",
+      "TOP",
+      "FIRST",
+      "DESC"
+    ],
+    "expectedSql": "SELECT name, price FROM products ORDER BY price LIMIT 3",
+    "orderMatters": true,
+    "hint": "Sort by price first, then cut the list short.",
+    "explanation": "LIMIT keeps only the first rows of the result."
+  },
+  {
+    "id": "t3-03",
+    "tier": 3,
+    "topic": "Sorting, LIMIT and DISTINCT",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "List each city once.",
+    "template": "SELECT ___ city FROM students",
+    "answers": [
+      "DISTINCT"
+    ],
+    "wordBank": [
+      "DISTINCT",
+      "UNIQUE",
+      "ONLY",
+      "ALL"
+    ],
+    "expectedSql": "SELECT DISTINCT city FROM students",
+    "orderMatters": false,
+    "hint": "Dublin shows up many times in the table.",
+    "explanation": "DISTINCT removes repeated rows from the result."
+  },
+  {
+    "id": "t3-04",
+    "tier": 3,
+    "topic": "Sorting, LIMIT and DISTINCT",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Show each name and salary, with the salary column called pay.",
+    "template": "SELECT name, salary ___ pay FROM employees",
+    "answers": [
+      "AS"
+    ],
+    "wordBank": [
+      "AS",
+      "TO",
+      "IS",
+      "LIKE"
+    ],
+    "expectedSql": "SELECT name, salary AS pay FROM employees",
+    "orderMatters": false,
+    "hint": "This keyword gives a column a new name.",
+    "explanation": "AS renames a column in the result."
+  },
+  {
+    "id": "t3-05",
+    "tier": 3,
+    "topic": "Sorting, LIMIT and DISTINCT",
+    "dataset": "company",
+    "mode": "complete",
+    "prompt": "Show the name and salary of the 2 best paid employees.",
+    "template": "SELECT name, salary FROM employees ",
+    "answers": [
+      "ORDER BY salary DESC LIMIT 2"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT name, salary FROM employees ORDER BY salary DESC LIMIT 2",
+    "orderMatters": true,
+    "hint": "Sort by salary with the biggest first, then keep 2 rows.",
+    "explanation": "ORDER BY first, then LIMIT."
+  },
+  {
+    "id": "t3-06",
+    "tier": 3,
+    "topic": "Sorting, LIMIT and DISTINCT",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Sort products by category from A to Z, and inside a category by price from high to low.",
+    "template": "SELECT category, name, price FROM products ORDER BY category ___, price ___",
+    "answers": [
+      "ASC",
+      "DESC"
+    ],
+    "wordBank": [
+      "ASC",
+      "DESC",
+      "DOWN",
+      "UP"
+    ],
+    "expectedSql": "SELECT category, name, price FROM products ORDER BY category ASC, price DESC",
+    "orderMatters": true,
+    "hint": "You can give each sort column its own direction.",
+    "explanation": "Each column in ORDER BY can have its own direction."
+  },
+  {
+    "id": "t3-07",
+    "tier": 3,
+    "topic": "Sorting, LIMIT and DISTINCT",
+    "dataset": "shop",
+    "mode": "complete",
+    "prompt": "Show each country of our customers once, sorted from A to Z.",
+    "template": "SELECT DISTINCT country FROM customers ",
+    "answers": [
+      "ORDER BY country"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT DISTINCT country FROM customers ORDER BY country",
+    "orderMatters": true,
+    "hint": "DISTINCT is already there. Add the sorting.",
+    "explanation": "DISTINCT removes repeats, ORDER BY sorts what is left."
+  },
+  {
+    "id": "t3-08",
+    "tier": 3,
+    "topic": "Sorting, LIMIT and DISTINCT",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show the name of the oldest student.",
+    "template": "SELECT name FROM students ORDER BY age ___ LIMIT 1",
+    "answers": [
+      "DESC"
+    ],
+    "wordBank": [
+      "DESC",
+      "ASC",
+      "DOWN",
+      "TOP"
+    ],
+    "expectedSql": "SELECT name FROM students ORDER BY age DESC LIMIT 1",
+    "orderMatters": true,
+    "hint": "The oldest has the biggest age, so it must come first.",
+    "explanation": "Sort from big to small and keep one row to get the largest."
+  },
+  {
+    "id": "t4-01",
+    "tier": 4,
+    "topic": "LIKE, IN, BETWEEN and NULL",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show the names of students whose name starts with A.",
+    "template": "SELECT name FROM students WHERE name ___ 'A%'",
+    "answers": [
+      "LIKE"
+    ],
+    "wordBank": [
+      "LIKE",
+      "=",
+      "IN",
+      "HAS"
+    ],
+    "expectedSql": "SELECT name FROM students WHERE name LIKE 'A%'",
+    "orderMatters": false,
+    "hint": "The % sign stands for any characters.",
+    "explanation": "LIKE matches patterns. % means any number of characters."
+  },
+  {
+    "id": "t4-02",
+    "tier": 4,
+    "topic": "LIKE, IN, BETWEEN and NULL",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show the names of products priced from 100 to 300.",
+    "template": "SELECT name FROM products WHERE price ___ 100 AND 300",
+    "answers": [
+      "BETWEEN"
+    ],
+    "wordBank": [
+      "BETWEEN",
+      "IN",
+      "LIKE",
+      "RANGE"
+    ],
+    "expectedSql": "SELECT name FROM products WHERE price BETWEEN 100 AND 300",
+    "orderMatters": false,
+    "hint": "This keyword is used together with AND.",
+    "explanation": "BETWEEN includes both ends of the range."
+  },
+  {
+    "id": "t4-03",
+    "tier": 4,
+    "topic": "LIKE, IN, BETWEEN and NULL",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show the names of customers from Ireland or India.",
+    "template": "SELECT name FROM customers WHERE country ___ ('Ireland', 'India')",
+    "answers": [
+      "IN"
+    ],
+    "wordBank": [
+      "IN",
+      "LIKE",
+      "BETWEEN",
+      "HAS"
+    ],
+    "expectedSql": "SELECT name FROM customers WHERE country IN ('Ireland', 'India')",
+    "orderMatters": false,
+    "hint": "It checks a value against a list.",
+    "explanation": "IN checks whether a value is in a list."
+  },
+  {
+    "id": "t4-04",
+    "tier": 4,
+    "topic": "LIKE, IN, BETWEEN and NULL",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show the names of students who have no score yet.",
+    "template": "SELECT name FROM students WHERE score ___",
+    "answers": [
+      "IS NULL"
+    ],
+    "wordBank": [
+      "IS NULL",
+      "= NULL",
+      "= 0",
+      "IS 0"
+    ],
+    "expectedSql": "SELECT name FROM students WHERE score IS NULL",
+    "orderMatters": false,
+    "hint": "NULL is never equal to anything, not even to NULL.",
+    "explanation": "Test for missing values with IS NULL, not with =."
+  },
+  {
+    "id": "t4-05",
+    "tier": 4,
+    "topic": "LIKE, IN, BETWEEN and NULL",
+    "dataset": "school",
+    "mode": "complete",
+    "prompt": "Show the names of students whose name ends with the letter a.",
+    "template": "SELECT name FROM students WHERE ",
+    "answers": [
+      "name LIKE '%a'"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT name FROM students WHERE name LIKE '%a'",
+    "orderMatters": false,
+    "hint": "Put the % sign at the start of the pattern.",
+    "explanation": "A % at the start of the pattern matches anything before the letter."
+  },
+  {
+    "id": "t4-06",
+    "tier": 4,
+    "topic": "LIKE, IN, BETWEEN and NULL",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Show the name and hire year of employees hired from 2019 to 2021, both years included.",
+    "template": "SELECT name, hire_year FROM employees WHERE hire_year BETWEEN ___ AND ___",
+    "answers": [
+      "2019",
+      "2021"
+    ],
+    "wordBank": [
+      "2019",
+      "2021",
+      "2018",
+      "2022"
+    ],
+    "expectedSql": "SELECT name, hire_year FROM employees WHERE hire_year BETWEEN 2019 AND 2021",
+    "orderMatters": false,
+    "hint": "Both ends are included.",
+    "explanation": "BETWEEN a AND b includes a and b."
+  },
+  {
+    "id": "t4-07",
+    "tier": 4,
+    "topic": "LIKE, IN, BETWEEN and NULL",
+    "dataset": "shop",
+    "mode": "complete",
+    "prompt": "Show the names of customers whose name contains the letter r.",
+    "template": "SELECT name FROM customers WHERE ",
+    "answers": [
+      "name LIKE '%r%'"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT name FROM customers WHERE name LIKE '%r%'",
+    "orderMatters": false,
+    "hint": "Put a % on both sides of the letter.",
+    "explanation": "% on both sides finds the letter anywhere in the text."
+  },
+  {
+    "id": "t4-08",
+    "tier": 4,
+    "topic": "LIKE, IN, BETWEEN and NULL",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show the ids of orders for any product except 1 and 3.",
+    "template": "SELECT id FROM orders WHERE product_id ___ (1, 3)",
+    "answers": [
+      "NOT IN"
+    ],
+    "wordBank": [
+      "NOT IN",
+      "IN",
+      "!=",
+      "LIKE"
+    ],
+    "expectedSql": "SELECT id FROM orders WHERE product_id NOT IN (1, 3)",
+    "orderMatters": false,
+    "hint": "Test against a list, but the opposite way.",
+    "explanation": "NOT IN keeps the rows whose value is not in the list."
+  },
+  {
+    "id": "t5-01",
+    "tier": 5,
+    "topic": "Aggregate functions",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "How many students are there?",
+    "template": "SELECT ___(*) FROM students",
+    "answers": [
+      "COUNT"
+    ],
+    "wordBank": [
+      "COUNT",
+      "SUM",
+      "NUMBER",
+      "LEN"
+    ],
+    "expectedSql": "SELECT COUNT(*) FROM students",
+    "orderMatters": false,
+    "hint": "This function counts rows.",
+    "explanation": "COUNT(*) counts the rows."
+  },
+  {
+    "id": "t5-02",
+    "tier": 5,
+    "topic": "Aggregate functions",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "What is the average student score?",
+    "template": "SELECT ___(score) FROM students",
+    "answers": [
+      "AVG"
+    ],
+    "wordBank": [
+      "AVG",
+      "SUM",
+      "MEAN",
+      "COUNT"
+    ],
+    "expectedSql": "SELECT AVG(score) FROM students",
+    "orderMatters": false,
+    "hint": "The short name for average.",
+    "explanation": "AVG adds the values up and divides by how many there are."
+  },
+  {
+    "id": "t5-03",
+    "tier": 5,
+    "topic": "Aggregate functions",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "What is the highest salary?",
+    "template": "SELECT ___(salary) FROM employees",
+    "answers": [
+      "MAX"
+    ],
+    "wordBank": [
+      "MAX",
+      "MIN",
+      "TOP",
+      "SUM"
+    ],
+    "expectedSql": "SELECT MAX(salary) FROM employees",
+    "orderMatters": false,
+    "hint": "The biggest value.",
+    "explanation": "MAX returns the largest value."
+  },
+  {
+    "id": "t5-04",
+    "tier": 5,
+    "topic": "Aggregate functions",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "What is the total stock of all products?",
+    "template": "SELECT ___(stock) FROM products",
+    "answers": [
+      "SUM"
+    ],
+    "wordBank": [
+      "SUM",
+      "COUNT",
+      "ADD",
+      "ALL"
+    ],
+    "expectedSql": "SELECT SUM(stock) FROM products",
+    "orderMatters": false,
+    "hint": "You want to add the stock numbers together.",
+    "explanation": "SUM adds all the values."
+  },
+  {
+    "id": "t5-05",
+    "tier": 5,
+    "topic": "Aggregate functions",
+    "dataset": "school",
+    "mode": "complete",
+    "prompt": "How many students have a score?",
+    "template": "SELECT ",
+    "answers": [
+      "COUNT(score) FROM students"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT COUNT(score) FROM students",
+    "orderMatters": false,
+    "hint": "COUNT(column) skips empty (NULL) values, COUNT(*) does not.",
+    "explanation": "COUNT(score) counts only the rows where score is not NULL."
+  },
+  {
+    "id": "t5-06",
+    "tier": 5,
+    "topic": "Aggregate functions",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show the lowest and the highest product price.",
+    "template": "SELECT ___(price), ___(price) FROM products",
+    "answers": [
+      "MIN",
+      "MAX"
+    ],
+    "wordBank": [
+      "MIN",
+      "MAX",
+      "AVG",
+      "SUM"
+    ],
+    "expectedSql": "SELECT MIN(price), MAX(price) FROM products",
+    "orderMatters": false,
+    "hint": "Smallest first, then biggest.",
+    "explanation": "MIN and MAX return the smallest and the largest value."
+  },
+  {
+    "id": "t5-07",
+    "tier": 5,
+    "topic": "Aggregate functions",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "How many orders did customer 1 place?",
+    "template": "SELECT COUNT(*) FROM orders WHERE customer_id ___ 1",
+    "answers": [
+      "="
+    ],
+    "wordBank": [
+      "=",
+      ">",
+      "<",
+      "!="
+    ],
+    "expectedSql": "SELECT COUNT(*) FROM orders WHERE customer_id = 1",
+    "orderMatters": false,
+    "hint": "Filter first, then count what is left.",
+    "explanation": "WHERE filters the rows before COUNT counts them."
+  },
+  {
+    "id": "t5-08",
+    "tier": 5,
+    "topic": "Aggregate functions",
+    "dataset": "company",
+    "mode": "complete",
+    "prompt": "What is the average salary in department 1?",
+    "template": "SELECT AVG(salary) FROM employees ",
+    "answers": [
+      "WHERE department_id = 1"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT AVG(salary) FROM employees WHERE department_id = 1",
+    "orderMatters": false,
+    "hint": "Filter the rows with WHERE.",
+    "explanation": "Aggregates only look at the rows that pass WHERE."
+  },
+  {
+    "id": "t6-01",
+    "tier": 6,
+    "topic": "GROUP BY and HAVING",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Count the students in each city.",
+    "template": "SELECT city, COUNT(*) FROM students ___ ___ city",
+    "answers": [
+      "GROUP",
+      "BY"
+    ],
+    "wordBank": [
+      "GROUP",
+      "BY",
+      "ORDER",
+      "WHERE",
+      "HAVING"
+    ],
+    "expectedSql": "SELECT city, COUNT(*) FROM students GROUP BY city",
+    "orderMatters": false,
+    "hint": "Two words that make one group per city.",
+    "explanation": "GROUP BY makes one group per value, and COUNT works inside each group."
+  },
+  {
+    "id": "t6-02",
+    "tier": 6,
+    "topic": "GROUP BY and HAVING",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Show the average salary of each department.",
+    "template": "SELECT department_id, AVG(salary) FROM employees GROUP BY ___",
+    "answers": [
+      "department_id"
+    ],
+    "wordBank": [
+      "department_id",
+      "salary",
+      "name",
+      "AVG"
+    ],
+    "expectedSql": "SELECT department_id, AVG(salary) FROM employees GROUP BY department_id",
+    "orderMatters": false,
+    "hint": "Group by the column that names the department.",
+    "explanation": "Group by the column you want one row for."
+  },
+  {
+    "id": "t6-03",
+    "tier": 6,
+    "topic": "GROUP BY and HAVING",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Show the departments that have more than 3 employees.",
+    "template": "SELECT department_id, COUNT(*) FROM employees GROUP BY department_id ___ COUNT(*) > 3",
+    "answers": [
+      "HAVING"
+    ],
+    "wordBank": [
+      "HAVING",
+      "WHERE",
+      "AND",
+      "LIMIT"
+    ],
+    "expectedSql": "SELECT department_id, COUNT(*) FROM employees GROUP BY department_id HAVING COUNT(*) > 3",
+    "orderMatters": false,
+    "hint": "WHERE works on rows before grouping. You need to filter groups.",
+    "explanation": "HAVING filters groups after they are made. WHERE filters rows before."
+  },
+  {
+    "id": "t6-04",
+    "tier": 6,
+    "topic": "GROUP BY and HAVING",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show the total quantity ordered of each product.",
+    "template": "SELECT product_id, ___(quantity) FROM orders GROUP BY product_id",
+    "answers": [
+      "SUM"
+    ],
+    "wordBank": [
+      "SUM",
+      "COUNT",
+      "MAX",
+      "AVG"
+    ],
+    "expectedSql": "SELECT product_id, SUM(quantity) FROM orders GROUP BY product_id",
+    "orderMatters": false,
+    "hint": "You want to add up the quantities.",
+    "explanation": "SUM adds up the values inside each group."
+  },
+  {
+    "id": "t6-05",
+    "tier": 6,
+    "topic": "GROUP BY and HAVING",
+    "dataset": "shop",
+    "mode": "complete",
+    "prompt": "Show the average price in each category.",
+    "template": "SELECT category, AVG(price) FROM products ",
+    "answers": [
+      "GROUP BY category"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT category, AVG(price) FROM products GROUP BY category",
+    "orderMatters": false,
+    "hint": "You need one row per category.",
+    "explanation": "GROUP BY category gives one result row per category."
+  },
+  {
+    "id": "t6-06",
+    "tier": 6,
+    "topic": "GROUP BY and HAVING",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show the cities whose average score is above 75.",
+    "template": "SELECT city, AVG(score) FROM students GROUP BY city HAVING AVG(score) ___ 75",
+    "answers": [
+      ">"
+    ],
+    "wordBank": [
+      ">",
+      "<",
+      "=",
+      "!="
+    ],
+    "expectedSql": "SELECT city, AVG(score) FROM students GROUP BY city HAVING AVG(score) > 75",
+    "orderMatters": false,
+    "hint": "Above means bigger.",
+    "explanation": "HAVING can use aggregate functions, WHERE cannot."
+  },
+  {
+    "id": "t6-07",
+    "tier": 6,
+    "topic": "GROUP BY and HAVING",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show the customers who placed at least 2 orders.",
+    "template": "SELECT customer_id, COUNT(*) FROM orders GROUP BY customer_id HAVING COUNT(*) ___ 2",
+    "answers": [
+      ">="
+    ],
+    "wordBank": [
+      ">=",
+      ">",
+      "<=",
+      "="
+    ],
+    "expectedSql": "SELECT customer_id, COUNT(*) FROM orders GROUP BY customer_id HAVING COUNT(*) >= 2",
+    "orderMatters": false,
+    "hint": "Two orders must be enough.",
+    "explanation": ">= includes the number itself."
+  },
+  {
+    "id": "t6-08",
+    "tier": 6,
+    "topic": "GROUP BY and HAVING",
+    "dataset": "company",
+    "mode": "complete",
+    "prompt": "Count the employees in each department.",
+    "template": "SELECT department_id, COUNT(*) FROM employees ",
+    "answers": [
+      "GROUP BY department_id"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT department_id, COUNT(*) FROM employees GROUP BY department_id",
+    "orderMatters": false,
+    "hint": "One row per department.",
+    "explanation": "GROUP BY department_id makes one group per department."
+  },
+  {
+    "id": "t7-01",
+    "tier": 7,
+    "topic": "JOINs",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Show each employee's name with the name of their department.",
+    "template": "SELECT employees.name, departments.name FROM employees ___ departments ON employees.department_id = departments.id",
+    "answers": [
+      "JOIN"
+    ],
+    "wordBank": [
+      "JOIN",
+      "UNION",
+      "GROUP BY",
+      "WHERE"
+    ],
+    "expectedSql": "SELECT employees.name, departments.name FROM employees JOIN departments ON employees.department_id = departments.id",
+    "orderMatters": false,
+    "hint": "You need to combine two tables.",
+    "explanation": "JOIN combines rows from two tables, matched by the ON condition."
+  },
+  {
+    "id": "t7-02",
+    "tier": 7,
+    "topic": "JOINs",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Show each employee's name with the location of their department.",
+    "template": "SELECT employees.name, departments.location FROM employees JOIN departments ON employees.department_id ___ departments.id",
+    "answers": [
+      "="
+    ],
+    "wordBank": [
+      "=",
+      ">",
+      "<>",
+      "IN"
+    ],
+    "expectedSql": "SELECT employees.name, departments.location FROM employees JOIN departments ON employees.department_id = departments.id",
+    "orderMatters": false,
+    "hint": "Rows match when the two ids are the same.",
+    "explanation": "The ON condition says which rows belong together."
+  },
+  {
+    "id": "t7-03",
+    "tier": 7,
+    "topic": "JOINs",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Show every department with its employees, even departments that have none.",
+    "template": "SELECT departments.name, employees.name FROM departments ___ JOIN employees ON employees.department_id = departments.id",
+    "answers": [
+      "LEFT"
+    ],
+    "wordBank": [
+      "LEFT",
+      "INNER",
+      "CROSS",
+      "OUTER"
+    ],
+    "expectedSql": "SELECT departments.name, employees.name FROM departments LEFT JOIN employees ON employees.department_id = departments.id",
+    "orderMatters": false,
+    "hint": "Keep all rows of the table on the left.",
+    "explanation": "LEFT JOIN keeps every row from the left table, with NULL when nothing matches."
+  },
+  {
+    "id": "t7-04",
+    "tier": 7,
+    "topic": "JOINs",
+    "dataset": "shop",
+    "mode": "complete",
+    "prompt": "Show each customer name with the number of orders they placed, including customers with none.",
+    "template": "SELECT customers.name, COUNT(orders.id) FROM customers LEFT JOIN orders ON orders.customer_id = customers.id ",
+    "answers": [
+      "GROUP BY customers.id"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT customers.name, COUNT(orders.id) FROM customers LEFT JOIN orders ON orders.customer_id = customers.id GROUP BY customers.id",
+    "orderMatters": false,
+    "hint": "One row per customer.",
+    "explanation": "LEFT JOIN keeps customers without orders, and COUNT(orders.id) counts 0 for them."
+  },
+  {
+    "id": "t7-05",
+    "tier": 7,
+    "topic": "JOINs",
+    "dataset": "school",
+    "mode": "complete",
+    "prompt": "Show the names of students who are enrolled in the Databases course.",
+    "template": "",
+    "answers": [
+      "SELECT students.name FROM students JOIN enrollments ON enrollments.student_id = students.id JOIN courses ON courses.id = enrollments.course_id WHERE courses.title = 'Databases'"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT students.name FROM students JOIN enrollments ON enrollments.student_id = students.id JOIN courses ON courses.id = enrollments.course_id WHERE courses.title = 'Databases'",
+    "orderMatters": false,
+    "hint": "Join students to enrollments, then enrollments to courses, then filter on the title.",
+    "explanation": "Chain JOINs to walk from one table to the next."
+  },
+  {
+    "id": "t7-06",
+    "tier": 7,
+    "topic": "JOINs",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show how much each customer spent in total (price times quantity).",
+    "template": "SELECT customers.name, SUM(products.price * orders.quantity) FROM customers JOIN orders ON orders.customer_id = customers.id JOIN products ON products.id = orders.product_id GROUP BY ___",
+    "answers": [
+      "customers.name"
+    ],
+    "wordBank": [
+      "customers.name",
+      "orders.id",
+      "products.price",
+      "customers.country"
+    ],
+    "expectedSql": "SELECT customers.name, SUM(products.price * orders.quantity) FROM customers JOIN orders ON orders.customer_id = customers.id JOIN products ON products.id = orders.product_id GROUP BY customers.name",
+    "orderMatters": false,
+    "hint": "You want one row per customer.",
+    "explanation": "Group by the thing you want one result row for."
+  },
+  {
+    "id": "t7-07",
+    "tier": 7,
+    "topic": "JOINs",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show the products that were never ordered.",
+    "template": "SELECT products.name FROM products LEFT JOIN orders ON orders.product_id = products.id WHERE orders.id ___",
+    "answers": [
+      "IS NULL"
+    ],
+    "wordBank": [
+      "IS NULL",
+      "= NULL",
+      "= 0",
+      "IS 0"
+    ],
+    "expectedSql": "SELECT products.name FROM products LEFT JOIN orders ON orders.product_id = products.id WHERE orders.id IS NULL",
+    "orderMatters": false,
+    "hint": "A product with no order has NULL where the order should be.",
+    "explanation": "After a LEFT JOIN, rows without a match have NULL in the right table."
+  },
+  {
+    "id": "t7-08",
+    "tier": 7,
+    "topic": "JOINs",
+    "dataset": "company",
+    "mode": "complete",
+    "prompt": "Show each employee with the name of their manager.",
+    "template": "SELECT e.name, m.name FROM employees e ",
+    "answers": [
+      "JOIN employees m ON e.manager_id = m.id"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT e.name, m.name FROM employees e JOIN employees m ON e.manager_id = m.id",
+    "orderMatters": false,
+    "hint": "Join the employees table to itself under a second name.",
+    "explanation": "A table can be joined to itself with two different aliases."
+  },
+  {
+    "id": "t8-01",
+    "tier": 8,
+    "topic": "Subqueries, CASE and WITH",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Show the employees who earn more than the average salary.",
+    "template": "SELECT name FROM employees WHERE salary > (SELECT ___(salary) FROM employees)",
+    "answers": [
+      "AVG"
+    ],
+    "wordBank": [
+      "AVG",
+      "SUM",
+      "MAX",
+      "COUNT"
+    ],
+    "expectedSql": "SELECT name FROM employees WHERE salary > (SELECT AVG(salary) FROM employees)",
+    "orderMatters": false,
+    "hint": "The inner query returns one number.",
+    "explanation": "A subquery in brackets can feed its result into the outer query."
+  },
+  {
+    "id": "t8-02",
+    "tier": 8,
+    "topic": "Subqueries, CASE and WITH",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show the products that cost more than every Stationery product.",
+    "template": "SELECT name FROM products WHERE price > (SELECT ___(price) FROM products WHERE category = 'Stationery')",
+    "answers": [
+      "MAX"
+    ],
+    "wordBank": [
+      "MAX",
+      "MIN",
+      "AVG",
+      "COUNT"
+    ],
+    "expectedSql": "SELECT name FROM products WHERE price > (SELECT MAX(price) FROM products WHERE category = 'Stationery')",
+    "orderMatters": false,
+    "hint": "To beat every one of them, beat the most expensive one.",
+    "explanation": "Beating the maximum means beating all of them."
+  },
+  {
+    "id": "t8-03",
+    "tier": 8,
+    "topic": "Subqueries, CASE and WITH",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Show the students who are enrolled in at least one course.",
+    "template": "SELECT name FROM students WHERE id ___ (SELECT student_id FROM enrollments)",
+    "answers": [
+      "IN"
+    ],
+    "wordBank": [
+      "IN",
+      "=",
+      "LIKE",
+      "EXISTS"
+    ],
+    "expectedSql": "SELECT name FROM students WHERE id IN (SELECT student_id FROM enrollments)",
+    "orderMatters": false,
+    "hint": "The subquery returns a list of ids.",
+    "explanation": "IN works with a list, and a subquery can produce that list."
+  },
+  {
+    "id": "t8-04",
+    "tier": 8,
+    "topic": "Subqueries, CASE and WITH",
+    "dataset": "school",
+    "mode": "blanks",
+    "prompt": "Label each student pass if the score is 60 or more, and fail otherwise.",
+    "template": "SELECT name, CASE WHEN score >= 60 THEN 'pass' ___ 'fail' END FROM students",
+    "answers": [
+      "ELSE"
+    ],
+    "wordBank": [
+      "ELSE",
+      "OTHERWISE",
+      "OR",
+      "NOT"
+    ],
+    "expectedSql": "SELECT name, CASE WHEN score >= 60 THEN 'pass' ELSE 'fail' END FROM students",
+    "orderMatters": false,
+    "hint": "It covers every case that did not match WHEN.",
+    "explanation": "CASE picks the first WHEN that is true, or ELSE if none is."
+  },
+  {
+    "id": "t8-05",
+    "tier": 8,
+    "topic": "Subqueries, CASE and WITH",
+    "dataset": "company",
+    "mode": "complete",
+    "prompt": "Show the employees who earn more than Bob.",
+    "template": "SELECT name FROM employees WHERE salary > ",
+    "answers": [
+      "(SELECT salary FROM employees WHERE name = 'Bob')"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT name FROM employees WHERE salary > (SELECT salary FROM employees WHERE name = 'Bob')",
+    "orderMatters": false,
+    "hint": "Find Bob's salary with a query in brackets.",
+    "explanation": "A subquery can look up a single value to compare with."
+  },
+  {
+    "id": "t8-06",
+    "tier": 8,
+    "topic": "Subqueries, CASE and WITH",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Show the names of departments that have an employee earning over 100000.",
+    "template": "SELECT name FROM departments WHERE id IN (SELECT department_id FROM employees WHERE salary ___ 100000)",
+    "answers": [
+      ">"
+    ],
+    "wordBank": [
+      ">",
+      "<",
+      "=",
+      "LIKE"
+    ],
+    "expectedSql": "SELECT name FROM departments WHERE id IN (SELECT department_id FROM employees WHERE salary > 100000)",
+    "orderMatters": false,
+    "hint": "Over means more than.",
+    "explanation": "The inner query finds the department ids, the outer query turns them into names."
+  },
+  {
+    "id": "t8-07",
+    "tier": 8,
+    "topic": "Subqueries, CASE and WITH",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Count the orders with a quantity above 1, using a temporary result called big.",
+    "template": "WITH big AS (SELECT * FROM orders WHERE quantity > 1) SELECT COUNT(*) FROM ___",
+    "answers": [
+      "big"
+    ],
+    "wordBank": [
+      "big",
+      "orders",
+      "WITH",
+      "AS"
+    ],
+    "expectedSql": "WITH big AS (SELECT * FROM orders WHERE quantity > 1) SELECT COUNT(*) FROM big",
+    "orderMatters": false,
+    "hint": "Read from the temporary result, not the original table.",
+    "explanation": "WITH gives a name to a query so you can use it like a table."
+  },
+  {
+    "id": "t8-08",
+    "tier": 8,
+    "topic": "Subqueries, CASE and WITH",
+    "dataset": "school",
+    "mode": "complete",
+    "prompt": "Show the students who scored above the average score.",
+    "template": "SELECT name FROM students WHERE score > ",
+    "answers": [
+      "(SELECT AVG(score) FROM students)"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT name FROM students WHERE score > (SELECT AVG(score) FROM students)",
+    "orderMatters": false,
+    "hint": "Put the average inside brackets.",
+    "explanation": "The subquery calculates the average, the outer query compares with it."
+  },
+  {
+    "id": "t9-01",
+    "tier": 9,
+    "topic": "Window functions",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Rank the employees by salary, highest first.",
+    "template": "SELECT name, ___() OVER (ORDER BY salary DESC) FROM employees",
+    "answers": [
+      "RANK"
+    ],
+    "wordBank": [
+      "RANK",
+      "SUM",
+      "MAX",
+      "AVG"
+    ],
+    "expectedSql": "SELECT name, RANK() OVER (ORDER BY salary DESC) FROM employees",
+    "orderMatters": false,
+    "hint": "A ranking function takes no arguments.",
+    "explanation": "RANK() OVER (ORDER BY ...) numbers the rows without collapsing them."
+  },
+  {
+    "id": "t9-02",
+    "tier": 9,
+    "topic": "Window functions",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show a running total of the quantity, in order id order.",
+    "template": "SELECT id, quantity, SUM(quantity) OVER (ORDER BY ___) FROM orders",
+    "answers": [
+      "id"
+    ],
+    "wordBank": [
+      "id",
+      "quantity",
+      "customer_id",
+      "product_id"
+    ],
+    "expectedSql": "SELECT id, quantity, SUM(quantity) OVER (ORDER BY id) FROM orders",
+    "orderMatters": false,
+    "hint": "The running total follows this order.",
+    "explanation": "With ORDER BY inside OVER, SUM becomes a running total."
+  },
+  {
+    "id": "t9-03",
+    "tier": 9,
+    "topic": "Window functions",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Show each employee with the average salary of their department.",
+    "template": "SELECT name, salary, AVG(salary) OVER (PARTITION BY ___) FROM employees",
+    "answers": [
+      "department_id"
+    ],
+    "wordBank": [
+      "department_id",
+      "salary",
+      "name",
+      "id"
+    ],
+    "expectedSql": "SELECT name, salary, AVG(salary) OVER (PARTITION BY department_id) FROM employees",
+    "orderMatters": false,
+    "hint": "Partition by what makes a group.",
+    "explanation": "PARTITION BY works like GROUP BY, but keeps every row."
+  },
+  {
+    "id": "t9-04",
+    "tier": 9,
+    "topic": "Window functions",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Rank the employees inside their department, highest salary first.",
+    "template": "SELECT name, department_id, RANK() OVER (PARTITION BY department_id ORDER BY salary ___) FROM employees",
+    "answers": [
+      "DESC"
+    ],
+    "wordBank": [
+      "DESC",
+      "ASC",
+      "DOWN",
+      "LIMIT"
+    ],
+    "expectedSql": "SELECT name, department_id, RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) FROM employees",
+    "orderMatters": false,
+    "hint": "Highest first means biggest to smallest.",
+    "explanation": "PARTITION BY restarts the ranking for each department."
+  },
+  {
+    "id": "t9-05",
+    "tier": 9,
+    "topic": "Window functions",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show each order with the quantity of the order before it.",
+    "template": "SELECT id, quantity, ___(quantity) OVER (ORDER BY id) FROM orders",
+    "answers": [
+      "LAG"
+    ],
+    "wordBank": [
+      "LAG",
+      "LEAD",
+      "FIRST",
+      "PREV"
+    ],
+    "expectedSql": "SELECT id, quantity, LAG(quantity) OVER (ORDER BY id) FROM orders",
+    "orderMatters": false,
+    "hint": "One looks back, the other looks forward.",
+    "explanation": "LAG looks at an earlier row, LEAD looks at a later row."
+  },
+  {
+    "id": "t9-06",
+    "tier": 9,
+    "topic": "Window functions",
+    "dataset": "company",
+    "mode": "blanks",
+    "prompt": "Show how far each employee's salary is from the average of their department.",
+    "template": "SELECT name, ___ - AVG(salary) OVER (PARTITION BY department_id) FROM employees",
+    "answers": [
+      "salary"
+    ],
+    "wordBank": [
+      "salary",
+      "department_id",
+      "hire_year",
+      "id"
+    ],
+    "expectedSql": "SELECT name, salary - AVG(salary) OVER (PARTITION BY department_id) FROM employees",
+    "orderMatters": false,
+    "hint": "Subtract the average from the employee's own pay.",
+    "explanation": "A window function can be used inside a calculation."
+  },
+  {
+    "id": "t9-07",
+    "tier": 9,
+    "topic": "Window functions",
+    "dataset": "shop",
+    "mode": "blanks",
+    "prompt": "Show each order with the number of orders its customer placed.",
+    "template": "SELECT id, customer_id, COUNT(*) OVER (PARTITION BY ___) FROM orders",
+    "answers": [
+      "customer_id"
+    ],
+    "wordBank": [
+      "customer_id",
+      "product_id",
+      "id",
+      "quantity"
+    ],
+    "expectedSql": "SELECT id, customer_id, COUNT(*) OVER (PARTITION BY customer_id) FROM orders",
+    "orderMatters": false,
+    "hint": "Count inside each customer.",
+    "explanation": "COUNT(*) OVER (PARTITION BY ...) counts per group without collapsing rows."
+  },
+  {
+    "id": "t9-08",
+    "tier": 9,
+    "topic": "Window functions",
+    "dataset": "company",
+    "mode": "complete",
+    "prompt": "Show the highest paid employee of each department (name and department_id).",
+    "template": "",
+    "answers": [
+      "SELECT name, department_id FROM (SELECT name, department_id, RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) AS r FROM employees) WHERE r = 1"
+    ],
+    "wordBank": [],
+    "expectedSql": "SELECT name, department_id FROM (SELECT name, department_id, RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) AS r FROM employees) WHERE r = 1",
+    "orderMatters": false,
+    "hint": "Rank inside each department in a subquery, then keep rank 1.",
+    "explanation": "Window functions cannot be used in WHERE, so rank first in a subquery and filter outside."
+  }
+]

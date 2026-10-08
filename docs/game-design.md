@@ -30,15 +30,18 @@ Decisions made so far. Update this file when a rule changes.
 1. Two themes, light and dark. The first visit follows the system setting. The player can switch with the sun and moon button, and the choice is remembered.
 2. All arrows look the same. Red is used only for a blocked tap, amber only for hints.
 
-## SQL challenges (step 3 and later)
+## SQL challenges
 
 1. Every arrow carries the same kind of challenge. Arrow length does not change difficulty.
-2. Two question styles: a skeleton query with blanks to fill in, and a task where the player completes or writes the SQL command.
-3. Difficulty rises with the level, always starting from basics. The first levels teach syntax (SELECT, FROM, WHERE), then it gets harder step by step: ORDER BY and LIMIT, aggregates, GROUP BY and HAVING, joins, subqueries, window functions.
-4. Early levels use a word bank for the blanks. Later levels switch to typing.
-5. Validation runs the player's query with sql.js on a sample dataset and compares the result rows with the expected rows, so any correct query is accepted.
+2. Tapping a free arrow opens the challenge. A correct answer fires the arrow. A wrong answer shakes the arrow, costs one life and shows the correct query and result. Cancelling before answering is free.
+3. Two question styles: a skeleton query with blanks to fill in, and a task where the player types the rest of a query that is started for them.
+4. Difficulty rises with the level, always starting from basics. There are 9 tiers: SELECT and FROM, WHERE, ORDER BY and LIMIT, LIKE and IN and BETWEEN and NULL, aggregates, GROUP BY and HAVING, joins, subqueries and CASE, window functions. The player moves up one tier every 2 levels.
+5. A level mostly asks its own tier, mixed with a few review questions from the two tiers before it. A question is not repeated until its round is finished.
+6. Levels 1 to 8 use a word bank for the blanks. From level 9 the player types.
+7. Validation runs the player's query with sql.js on a small dataset and compares the result rows with the answer rows, so any correct query is accepted. Each check uses a fresh in-memory database that is read only, and only one statement is allowed.
+8. The question bank has 72 questions (8 per tier) and 3 datasets, bundled in src/data/fallback. Tests run every answer and check that every wrong word bank choice really fails.
 
 ## Open decisions
 
-1. Whether a wrong SQL answer should also shake the arrow, or only show feedback in the modal and cost a life.
-2. Exact level bands for each SQL topic.
+1. Levels reach hundreds of arrows, and each needs a challenge. The 72 questions repeat many times per level. Options: shorter challenges on big levels, a larger bank from Google Sheets in step 5, or capping arrows per level.
+2. Whether the SQL hint inside the challenge should cost score.

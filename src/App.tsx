@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Board from './components/Board.tsx'
 import type { BoardHandle } from './components/Board.tsx'
+import ChallengeModal from './components/ChallengeModal.tsx'
 import {
   BulbIcon,
   ExitFullscreenIcon,
@@ -23,10 +24,17 @@ import {
   FREE_HINTS_PER_LEVEL,
   LIVES_PER_GAME,
 } from './game/constants.ts'
+import { QuestionDeck } from './game/curriculum.ts'
 import { getExitInfo } from './game/exit.ts'
 import { generateBoard } from './game/levels.ts'
 import type { BoardArrow } from './game/types.ts'
+import { checkAnswer, describeSchema, openDatabase } from './sql/check.ts'
+import type { SchemaTable } from './sql/check.ts'
+import { loadSql } from './sql/engine.ts'
+import { fallbackStorage } from './storage/fallbackStorage.ts'
+import type { Dataset, Question } from './storage/types.ts'
 import { useTheme } from './theme.ts'
+import type { SqlJsStatic } from 'sql.js'
 
 interface LevelState {
   level: number
@@ -46,11 +54,28 @@ interface Message {
   tone: 'danger' | 'info'
 }
 
-// The arrow that was tapped while blocked, and the arrow that was in its way.
+// The arrow that was tapped while blocked, and the arrow that was in its way. After a wrong SQL
+// answer the arrow shakes too, but nothing is blocking it, so blockerId is null.
 interface BlockedInfo {
   shakeId: string
-  blockerId: string
+  blockerId: string | null
   nonce: number
+}
+
+// Everything the SQL challenges need. It loads once, in the background, while the player starts.
+interface SqlData {
+  SQL: SqlJsStatic
+  questions: Question[]
+  datasets: Dataset[]
+}
+
+// The challenge that is open: which arrow it will fire, and the question that was drawn for it.
+interface Challenge {
+  arrowId: string
+  question: Question
+  setupSql: string
+  schema: SchemaTable[]
+  seed: number
 }
 
 function createLevel(level: number, key: number): LevelState {
@@ -65,8 +90,8 @@ function createLevel(level: number, key: number): LevelState {
   }
 }
 
-// Step 2b version of the game screen. A tap on a free arrow removes it directly. In step 3 that tap
-// will open the SQL challenge instead, and in step 4 score and combo move into proper game state.
+// The game screen. Tapping a free arrow opens a SQL challenge. A correct answer fires the arrow, a
+// wrong answer costs a life. In step 4 score and combo move into proper game state.
 export default function App() {
   const [theme, toggleTheme] = useTheme()
   const boardRef = useRef<BoardHandle>(null)
@@ -78,6 +103,14 @@ export default function App() {
   const [score, setScore] = useState(0)
   const [status, setStatus] = useState<Status>('playing')
   const [paused, setPaused] = useState(false)
+
+  // The SQL engine, questions and datasets. Null while they load.
+  const [sqlData, setSqlData] = useState<SqlData | null>(null)
+  const [sqlFailed, setSqlFailed] = useState(false)
+  const [challenge, setChallenge] = useState<Challenge | null>(null)
+  // Hands out the questions of the current level. Null means a new one is made on the next tap.
+  const deck = useRef<QuestionDeck | null>(null)
+  const challengeCount = useRef(0)
 
   // Hints belong to a level. Restarting the level does not give the free hints back.
   const [hintsUsed, setHintsUsed] = useState(0)
@@ -104,6 +137,21 @@ export default function App() {
     }
   }, [])
 
+  // Load the SQL engine (a small wasm file) and the question bank as soon as the page opens.
+  useEffect(() => {
+    let cancelled = false
+    Promise.all([loadSql(), fallbackStorage.getQuestions(), fallbackStorage.getDatasets()])
+      .then(([SQL, questions, datasets]) => {
+        if (!cancelled) setSqlData({ SQL, questions, datasets })
+      })
+      .catch(() => {
+        if (!cancelled) setSqlFailed(true)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   useEffect(() => {
     const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement))
     document.addEventListener('fullscreenchange', onChange)
@@ -117,6 +165,9 @@ export default function App() {
     setBlocked(null)
     setMessage(null)
     setHintId(null)
+    setChallenge(null)
+    // Every board starts with a fresh set of questions.
+    deck.current = null
   }
 
   function showMessage(text: string, tone: Message['tone'], clearBlocked: boolean) {
@@ -193,7 +244,73 @@ export default function App() {
       return
     }
 
+    // A free arrow: ask a SQL question. The arrow only leaves if the answer is right.
     setBlocked(null)
+    openChallenge(id)
+  }
+
+  function openChallenge(arrowId: string) {
+    if (sqlData === null) {
+      showMessage(
+        sqlFailed ? 'The SQL engine could not load. Reload the page and try again.' : 'Loading the SQL engine...',
+        'info',
+        false,
+      )
+      return
+    }
+    if (deck.current === null) {
+      deck.current = new QuestionDeck(sqlData.questions, game.level, game.key * 7919 + game.level)
+    }
+    const question = deck.current.next()
+    const dataset = sqlData.datasets.find((d) => d.name === question.dataset)
+    if (!dataset) {
+      showMessage(`Question ${question.id} uses an unknown dataset. Tap again for another question.`, 'danger', false)
+      return
+    }
+
+    // Read the table and column names from a throwaway database, to show them to the player.
+    const db = openDatabase(sqlData.SQL, dataset.setupSql)
+    const schema = describeSchema(db)
+    db.close()
+
+    challengeCount.current += 1
+    setChallenge({ arrowId, question, setupSql: dataset.setupSql, schema, seed: challengeCount.current })
+  }
+
+  function checkChallenge(sql: string) {
+    // The modal only opens once the engine is loaded, so sqlData is set here.
+    return checkAnswer(sqlData!.SQL, challenge!.setupSql, challenge!.question, sql)
+  }
+
+  function finishChallenge(correct: boolean) {
+    if (challenge === null) return
+    const arrowId = challenge.arrowId
+    setChallenge(null)
+    if (correct) {
+      fireArrow(arrowId)
+      return
+    }
+
+    // Wrong answer: the arrow shakes, a life is lost, and the next tap draws a new question.
+    const livesLeft = Math.max(0, lives - 1)
+    nonce.current += 1
+    setLives(livesLeft)
+    setBlocked({ shakeId: arrowId, blockerId: null, nonce: nonce.current })
+    if (livesLeft === 0) {
+      window.clearTimeout(feedbackTimer.current)
+      setMessage(null)
+      setStatus('gameover')
+    } else {
+      showMessage(`Wrong answer. You lost a life. ${livesLeft} left.`, 'danger', true)
+    }
+  }
+
+  // Sends an arrow off the board after a correct answer.
+  function fireArrow(id: string) {
+    const arrow = game.arrows.find((a) => a.id === id)
+    if (!arrow || arrow.status !== 'active') return
+    const active = game.arrows.filter((a) => a.status === 'active')
+
     setScore((s) => s + CLEAR_ARROW_SCORE)
     setGame((g) => ({
       ...g,
@@ -327,6 +444,20 @@ export default function App() {
           shakeNonce={blocked?.nonce ?? 0}
           onTap={onTap}
         />
+
+        {challenge && (
+          <ChallengeModal
+            key={challenge.seed}
+            question={challenge.question}
+            level={game.level}
+            schema={challenge.schema}
+            seed={challenge.seed}
+            livesLeft={lives}
+            onCheck={checkChallenge}
+            onFinish={finishChallenge}
+            onCancel={() => setChallenge(null)}
+          />
+        )}
 
         {status === 'cleared' && (
           <div className="overlay">

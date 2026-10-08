@@ -1,0 +1,278 @@
+/* The SQL challenge dialog and the result tables. Colors come from the theme variables in index.css,
+   so it follows the light and dark themes automatically. */
+.challenge-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.challenge {
+  width: min(640px, 100%);
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  padding: 18px 18px 16px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.challenge__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.challenge__lives {
+  color: var(--heart);
+}
+
+.challenge__prompt {
+  margin: 8px 0 10px;
+  font-size: 1.15rem;
+  line-height: 1.35;
+}
+
+.schema {
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.schema summary {
+  cursor: pointer;
+}
+
+.schema ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+/* The query itself, in a monospace font. Gaps sit inside the text. */
+.code {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--board);
+  font-family: ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
+  font-size: 0.95rem;
+  line-height: 2.1;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.code--plain {
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+
+.code__start {
+  line-height: 1.5;
+}
+
+.gap,
+.slot,
+.complete {
+  font: inherit;
+  color: var(--text);
+}
+
+.gap,
+.slot {
+  display: inline-block;
+  min-width: 4.5ch;
+  height: 1.9em;
+  margin: 0 2px;
+  padding: 0 8px;
+  border: 0;
+  border-bottom: 2px solid var(--accent);
+  border-radius: 6px 6px 0 0;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.slot {
+  cursor: pointer;
+}
+
+.slot--full {
+  font-weight: 700;
+}
+
+.complete {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-bottom: 2px solid var(--accent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.gap:focus-visible,
+.slot:focus-visible,
+.complete:focus-visible,
+.word:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.word {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--text);
+  font-family: ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.word:hover {
+  border-color: var(--accent);
+}
+
+.challenge__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.challenge__actions .btn {
+  justify-content: center;
+}
+
+.challenge__error {
+  margin: 10px 0 0;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.challenge__hint {
+  margin: 10px 0 0;
+  color: var(--hint);
+  font-weight: 600;
+}
+
+.feedback-card {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+}
+
+.feedback-card--ok {
+  border-color: var(--accent);
+}
+
+.feedback-card--bad {
+  border-color: var(--danger);
+}
+
+.feedback-card h3 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+}
+
+.feedback-card--bad h3 {
+  color: var(--danger);
+}
+
+.feedback-card p {
+  margin: 0 0 8px;
+}
+
+.feedback-card__label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.result {
+  margin: 8px 0 0;
+}
+
+.result figcaption {
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.result__count {
+  margin-left: 6px;
+  font-weight: 500;
+}
+
+.result__scroll {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.result table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.result th,
+.result td {
+  padding: 5px 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.result th {
+  background: var(--board);
+  font-weight: 700;
+}
+
+.result tr + tr td {
+  border-top: 1px solid var(--line);
+}
+
+.result__null {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.result__more {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+@media (max-width: 520px) {
+  .challenge {
+    padding: 14px 12px;
+    border-radius: 16px;
+  }
+
+  .code {
+    font-size: 0.88rem;
+  }
+}
