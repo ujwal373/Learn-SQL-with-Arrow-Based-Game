@@ -14,8 +14,10 @@ export const LIVES_PER_GAME = 3
 // Tapping an arrow that is blocked by another arrow costs this many lives.
 export const BLOCKED_TAP_LIVES_LOST = 1
 
-// Temporary scoring until step 4 adds the combo multiplier.
-export const CLEAR_ARROW_SCORE = 100
+// Base points awarded for firing one arrow. Multiplied by the current combo streak.
+export const BASE_ARROW_SCORE = 100
+// Combo resets to 1 on any mistake. Cap prevents unreachable scores on big boards.
+export const COMBO_CAP = 8
 
 // Each level includes this many free hints. After that every hint costs score.
 export const FREE_HINTS_PER_LEVEL = 2

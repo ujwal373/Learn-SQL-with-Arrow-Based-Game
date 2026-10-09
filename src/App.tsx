@@ -17,8 +17,9 @@ import { boundsOf } from './game/arrow.ts'
 import type { Bounds } from './game/arrow.ts'
 import { getBlocker, findHintArrow } from './game/blocking.ts'
 import {
+  BASE_ARROW_SCORE,
   BLOCKED_TAP_LIVES_LOST,
-  CLEAR_ARROW_SCORE,
+  COMBO_CAP,
   EXTRA_HINT_SCORE_COST,
   FEEDBACK_MS,
   FREE_HINTS_PER_LEVEL,
@@ -90,8 +91,8 @@ function createLevel(level: number, key: number): LevelState {
   }
 }
 
-// The game screen. Tapping a free arrow opens a SQL challenge. A correct answer fires the arrow, a
-// wrong answer costs a life. In step 4 score and combo move into proper game state.
+// The game screen. Tapping a free arrow opens a SQL challenge. A correct answer fires the arrow.
+// A wrong answer costs a life. Combo multiplier rewards consecutive correct answers.
 export default function App() {
   const [theme, toggleTheme] = useTheme()
   const boardRef = useRef<BoardHandle>(null)
@@ -103,6 +104,24 @@ export default function App() {
   const [score, setScore] = useState(0)
   const [status, setStatus] = useState<Status>('playing')
   const [paused, setPaused] = useState(false)
+
+  // Consecutive correct answers without a mistake. Resets to 1 on any life loss.
+  const [combo, setCombo] = useState(1)
+
+  // Run identity: set once per newGame, carried through level progression.
+  // runId is used for leaderboard anti-cheat in step 6.
+  const runId = useRef<string>(crypto.randomUUID())
+
+  // Highest level the player has reached in this run (advances forward only).
+  const highestLevel = useRef<number>(1)
+
+  // Wall-clock time tracking for the leaderboard run duration.
+  // Set to Date.now() in a mount effect and on newGame, never during render.
+  const runStartMs = useRef<number>(0)
+  const pauseStartMs = useRef<number | null>(null)
+  const totalPausedMs = useRef<number>(0)
+  // Seconds elapsed when the current run ended. Written at game-over; read in the overlay.
+  const [finalSeconds, setFinalSeconds] = useState(0)
 
   // The SQL engine, questions and datasets. Null while they load.
   const [sqlData, setSqlData] = useState<SqlData | null>(null)
@@ -137,6 +156,11 @@ export default function App() {
     }
   }, [])
 
+  // Set the run start time once after the first render. Not during render to satisfy purity rules.
+  useEffect(() => {
+    runStartMs.current = Date.now()
+  }, [])
+
   // Load the SQL engine (a small wasm file) and the question bank as soon as the page opens.
   useEffect(() => {
     let cancelled = false
@@ -157,6 +181,23 @@ export default function App() {
     document.addEventListener('fullscreenchange', onChange)
     return () => document.removeEventListener('fullscreenchange', onChange)
   }, [])
+
+  // Accumulate paused time so run duration is accurate.
+  useEffect(() => {
+    if (paused) {
+      pauseStartMs.current = Date.now()
+    } else if (pauseStartMs.current !== null) {
+      totalPausedMs.current += Date.now() - pauseStartMs.current
+      pauseStartMs.current = null
+    }
+  }, [paused])
+
+  // Returns how many seconds have elapsed in the current run, excluding paused time.
+  function elapsedSeconds(): number {
+    const paused_so_far =
+      totalPausedMs.current + (pauseStartMs.current !== null ? Date.now() - pauseStartMs.current : 0)
+    return Math.floor((Date.now() - runStartMs.current - paused_so_far) / 1000)
+  }
 
   function clearTimers() {
     exitTimers.current.forEach((t) => window.clearTimeout(t))
@@ -179,7 +220,7 @@ export default function App() {
     }, FEEDBACK_MS)
   }
 
-  // Loads a level. Lives and score carry over, because they belong to the game, not the level.
+  // Loads the next level. Lives, score, and combo carry over; they belong to the run.
   function loadLevel(level: number) {
     clearTimers()
     boardKey.current += 1
@@ -189,28 +230,37 @@ export default function App() {
     penaltyPaid.current = 0
     setStatus('playing')
     setPaused(false)
+    if (level > highestLevel.current) highestLevel.current = level
   }
 
-  // Starts a fresh game: full lives and a zero score, at the chosen level.
+  // Starts a fresh game: full lives, zero score, combo 1, at the chosen level.
   function newGame(level: number) {
     clearTimers()
     boardKey.current += 1
     setGame(createLevel(level, boardKey.current))
     setLives(LIVES_PER_GAME)
     setScore(0)
+    setCombo(1)
     setHintsUsed(0)
     levelStartScore.current = 0
     penaltyPaid.current = 0
+    highestLevel.current = level
+    runId.current = crypto.randomUUID()
+    runStartMs.current = Date.now()
+    totalPausedMs.current = 0
+    pauseStartMs.current = null
     setStatus('playing')
     setPaused(false)
   }
 
   // Puts the arrows back. Lives stay as they are and score returns to where the level began.
+  // Combo resets because mistakes leading to a restart should not persist.
   function restartLevel() {
     clearTimers()
     boardKey.current += 1
     setGame(createLevel(game.level, boardKey.current))
     setScore(Math.max(0, levelStartScore.current - penaltyPaid.current))
+    setCombo(1)
     setStatus('playing')
     setPaused(false)
   }
@@ -229,10 +279,12 @@ export default function App() {
       const livesLeft = Math.max(0, lives - BLOCKED_TAP_LIVES_LOST)
       nonce.current += 1
       setLives(livesLeft)
+      setCombo(1)
       setBlocked({ shakeId: id, blockerId: blocker.id, nonce: nonce.current })
       if (livesLeft === 0) {
         window.clearTimeout(feedbackTimer.current)
         setMessage(null)
+        setFinalSeconds(elapsedSeconds())
         setStatus('gameover')
       } else {
         showMessage(
@@ -291,27 +343,35 @@ export default function App() {
       return
     }
 
-    // Wrong answer: the arrow shakes, a life is lost, and the next tap draws a new question.
+    // Wrong answer: the arrow shakes, a life is lost, combo resets, and the next tap draws a new question.
     const livesLeft = Math.max(0, lives - 1)
     nonce.current += 1
     setLives(livesLeft)
+    setCombo(1)
     setBlocked({ shakeId: arrowId, blockerId: null, nonce: nonce.current })
     if (livesLeft === 0) {
       window.clearTimeout(feedbackTimer.current)
       setMessage(null)
+      setFinalSeconds(elapsedSeconds())
       setStatus('gameover')
     } else {
       showMessage(`Wrong answer. You lost a life. ${livesLeft} left.`, 'danger', true)
     }
   }
 
-  // Sends an arrow off the board after a correct answer.
+  // Sends an arrow off the board after a correct answer. Score = base * combo, then combo grows.
   function fireArrow(id: string) {
     const arrow = game.arrows.find((a) => a.id === id)
     if (!arrow || arrow.status !== 'active') return
     const active = game.arrows.filter((a) => a.status === 'active')
 
-    setScore((s) => s + CLEAR_ARROW_SCORE)
+    // Read combo from state via functional update to avoid stale closure.
+    setCombo((c) => {
+      const earned = BASE_ARROW_SCORE * c
+      setScore((s) => s + earned)
+      return Math.min(c + 1, COMBO_CAP)
+    })
+
     setGame((g) => ({
       ...g,
       arrows: g.arrows.map((a) => (a.id === id ? { ...a, status: 'exiting' as const } : a)),
@@ -371,6 +431,9 @@ export default function App() {
   const freeHintsLeft = Math.max(0, FREE_HINTS_PER_LEVEL - hintsUsed)
   const canPlay = status === 'playing' && !paused
 
+  // Score earned on this level (used in the cleared overlay).
+  const levelScore = score - Math.max(0, levelStartScore.current - penaltyPaid.current)
+
   return (
     <main className="game">
       <header className="topbar">
@@ -419,6 +482,11 @@ export default function App() {
         <span>
           Score <strong>{score}</strong>
         </span>
+        {combo > 1 && (
+          <span className="combo-badge" aria-label={`${combo}x combo`}>
+            x{combo} COMBO
+          </span>
+        )}
       </div>
 
       <p
@@ -463,7 +531,8 @@ export default function App() {
           <div className="overlay">
             <div className="overlay__card">
               <h2>Level {game.level} cleared</h2>
-              <p>Score {score}</p>
+              <p>Score this level: {levelScore}</p>
+              <p>Total score: {score}</p>
               <div className="overlay__actions">
                 <button type="button" className="btn btn--primary" onClick={() => loadLevel(game.level + 1)}>
                   Next level
@@ -477,9 +546,9 @@ export default function App() {
           <div className="overlay">
             <div className="overlay__card">
               <h2>Out of lives</h2>
-              <p>
-                You reached level {game.level} with a score of {score}.
-              </p>
+              <p>Level {highestLevel.current}</p>
+              <p>Score {score}</p>
+              <p>Time {finalSeconds}s</p>
               <div className="overlay__actions">
                 <button type="button" className="btn btn--primary" onClick={() => newGame(game.level)}>
                   Retry level {game.level} with {LIVES_PER_GAME} lives
