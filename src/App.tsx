@@ -32,7 +32,7 @@ import type { BoardArrow } from './game/types.ts'
 import { checkAnswer, describeSchema, openDatabase } from './sql/check.ts'
 import type { SchemaTable } from './sql/check.ts'
 import { loadSql } from './sql/engine.ts'
-import { fallbackStorage } from './storage/fallbackStorage.ts'
+import { sheetsStorage } from './storage/sheetsStorage.ts'
 import type { Dataset, Question } from './storage/types.ts'
 import { useTheme } from './theme.ts'
 import type { SqlJsStatic } from 'sql.js'
@@ -164,7 +164,7 @@ export default function App() {
   // Load the SQL engine (a small wasm file) and the question bank as soon as the page opens.
   useEffect(() => {
     let cancelled = false
-    Promise.all([loadSql(), fallbackStorage.getQuestions(), fallbackStorage.getDatasets()])
+    Promise.all([loadSql(), sheetsStorage.getQuestions(), sheetsStorage.getDatasets()])
       .then(([SQL, questions, datasets]) => {
         if (!cancelled) setSqlData({ SQL, questions, datasets })
       })
