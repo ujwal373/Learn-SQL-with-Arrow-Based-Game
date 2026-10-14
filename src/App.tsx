@@ -597,17 +597,19 @@ export default function App() {
         </button>
       </footer>
 
-      <details className="dev">
-        <summary>Dev tools (removed before launch)</summary>
-        <div className="dev__buttons">
-          <button type="button" className="btn" disabled={game.level <= 1} onClick={() => loadLevel(game.level - 1)}>
-            Previous level
-          </button>
-          <button type="button" className="btn" onClick={() => loadLevel(game.level + 1)}>
-            Next level
-          </button>
-        </div>
-      </details>
+      {import.meta.env.DEV && (
+        <details className="dev">
+          <summary>Dev tools</summary>
+          <div className="dev__buttons">
+            <button type="button" className="btn" disabled={game.level <= 1} onClick={() => loadLevel(game.level - 1)}>
+              Previous level
+            </button>
+            <button type="button" className="btn" onClick={() => loadLevel(game.level + 1)}>
+              Next level
+            </button>
+          </div>
+        </details>
+      )}
     </main>
   )
 }
