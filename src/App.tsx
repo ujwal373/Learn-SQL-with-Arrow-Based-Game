@@ -253,6 +253,7 @@ export default function App() {
     runStartMs.current = Date.now()
     totalPausedMs.current = 0
     pauseStartMs.current = null
+    setLeaderboardOpen(false)
     setStatus('playing')
     setPaused(false)
   }
@@ -546,7 +547,7 @@ export default function App() {
           </div>
         )}
 
-        {status === 'gameover' && (
+        {status === 'gameover' && !leaderboardOpen && (
           <div className="overlay">
             <div className="overlay__card">
               <h2>Out of lives</h2>
@@ -554,7 +555,10 @@ export default function App() {
               <p>Score {score}</p>
               <p>Time {finalSeconds}s</p>
               <div className="overlay__actions">
-                <button type="button" className="btn btn--primary" onClick={() => newGame(game.level)}>
+                <button type="button" className="btn btn--primary" onClick={() => setLeaderboardOpen(true)}>
+                  View leaderboard
+                </button>
+                <button type="button" className="btn" onClick={() => newGame(game.level)}>
                   Retry level {game.level} with {LIVES_PER_GAME} lives
                 </button>
                 {game.level > 1 && (
@@ -565,6 +569,16 @@ export default function App() {
               </div>
             </div>
           </div>
+        )}
+
+        {status === 'gameover' && leaderboardOpen && (
+          <LeaderboardModal
+            score={score}
+            highestLevel={highestLevel.current}
+            runSeconds={finalSeconds}
+            runId={runId.current}
+            onClose={() => setLeaderboardOpen(false)}
+          />
         )}
 
         {status === 'playing' && paused && (

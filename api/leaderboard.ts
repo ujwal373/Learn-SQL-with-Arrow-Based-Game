@@ -1,13 +1,13 @@
 // Vercel Node.js serverless function for the global leaderboard.
 //
-// GET  /api/leaderboard — returns top 20 entries sorted by score descending.
-// POST /api/leaderboard — validates and appends a new score submission.
+// GET  /api/leaderboard -- returns top 20 entries sorted by score descending.
+// POST /api/leaderboard -- validates and appends a new score submission.
 //
 // Required environment variables (set in Vercel dashboard, never committed):
-//   GOOGLE_SHEETS_API_KEY          — same read-only key used by api/questions.ts
-//   SPREADSHEET_ID                 — same spreadsheet
-//   GOOGLE_SERVICE_ACCOUNT_EMAIL   — service account email (needs Editor access to the sheet)
-//   GOOGLE_PRIVATE_KEY             — RSA private key; paste with literal \n in Vercel dashboard
+//   GOOGLE_SHEETS_API_KEY          -- same read-only key used by api/questions.ts
+//   SPREADSHEET_ID                 -- same spreadsheet
+//   GOOGLE_SERVICE_ACCOUNT_EMAIL   -- service account email (needs Editor access to the sheet)
+//   GOOGLE_PRIVATE_KEY             -- RSA private key; paste with literal \n in Vercel dashboard
 //
 // Leaderboard tab column layout (tab named "leaderboard", row 1 is the header):
 //   A playerName  B score  C highestLevel  D runSeconds  E runId  F timestamp
@@ -26,8 +26,8 @@ type Res = {
   status(code: number): { json(data: unknown): void }
 }
 
-// ── Rate limiting ─────────────────────────────────────────────────────────────
-// In-memory; resets on cold start. Good enough for a portfolio project.
+// ---------- Rate limiting ---------------------------------------------------
+// In-memory map; resets on cold start. Sufficient for a portfolio project.
 const recentSubmissions = new Map<string, number>()
 const RATE_LIMIT_MS = 60_000
 
@@ -42,7 +42,7 @@ function checkRateLimit(ip: string): boolean {
   const last = recentSubmissions.get(ip)
   if (last !== undefined && Date.now() - last < RATE_LIMIT_MS) return false
   recentSubmissions.set(ip, Date.now())
-  // Prune old entries so the Map does not grow unbounded in a long-lived instance.
+  // Prune stale entries so the Map does not grow without bound.
   if (recentSubmissions.size > 500) {
     const cutoff = Date.now() - RATE_LIMIT_MS
     for (const [key, time] of recentSubmissions) {
@@ -52,17 +52,17 @@ function checkRateLimit(ip: string): boolean {
   return true
 }
 
-// ── Input validation and sanitisation ────────────────────────────────────────
-// These constants match src/game/constants.ts; kept here to avoid importing browser code.
+// ---------- Input validation and sanitisation --------------------------------
+// Match src/game/constants.ts values (kept inline to avoid importing browser code).
 const BASE_SCORE = 100
 const COMBO_CAP = 8
-const MAX_ARROWS_PER_LEVEL = 300 // generous upper bound for score validation
+const MAX_ARROWS_PER_LEVEL = 300
 
 function sanitiseName(raw: unknown): string | null {
   if (typeof raw !== 'string') return null
   const clean = raw
-    .replace(/<[^>]*>/g, '')         // strip HTML tags
-    .replace(/[\x00-\x1f\x7f]/g, '') // strip control characters
+    .replace(/<[^>]*>/g, '')    // strip HTML tags
+    .replace(/\p{Cc}/gu, '')    // strip Unicode control characters (uses Unicode property escape)
     .trim()
     .slice(0, 30)
   return clean.length >= 1 ? clean : null
@@ -89,17 +89,17 @@ function validate(body: unknown): ValidationResult {
   if (!Number.isInteger(runSeconds) || runSeconds < 0) return { ok: false, error: 'Invalid runSeconds' }
   if (!runId) return { ok: false, error: 'Missing runId' }
 
-  // Upper bound: very generous, just catches obviously impossible scores.
+  // Generous upper bound -- catches only obviously impossible scores.
   const maxScore = highestLevel * MAX_ARROWS_PER_LEVEL * BASE_SCORE * COMBO_CAP
   if (score > maxScore) return { ok: false, error: 'Score exceeds possible maximum for that level' }
 
-  // Minimum time: 10 seconds per level — prevents instant-completion bots.
+  // Minimum 10 seconds per level -- prevents instant-completion bots.
   if (runSeconds < highestLevel * 10) return { ok: false, error: 'Run time too short for that level' }
 
   return { ok: true, data: { playerName, score, highestLevel, runSeconds, runId } }
 }
 
-// ── Service account JWT auth ──────────────────────────────────────────────────
+// ---------- Service account JWT auth ----------------------------------------
 let tokenCache: { value: string; expiresAt: number } | null = null
 
 function base64url(str: string): string {
@@ -148,7 +148,7 @@ async function getAccessToken(email: string, privateKey: string): Promise<string
   return data.access_token
 }
 
-// ── Main handler ──────────────────────────────────────────────────────────────
+// ---------- Main handler ----------------------------------------------------
 export default async function handler(req: Req, res: Res): Promise<void> {
   const apiKey = process.env['GOOGLE_SHEETS_API_KEY']
   const sheetId = process.env['SPREADSHEET_ID']
@@ -158,7 +158,7 @@ export default async function handler(req: Req, res: Res): Promise<void> {
     return
   }
 
-  // GET — read and return the top 20 entries
+  // GET -- read and return the top 20 entries
   if (req.method === 'GET' || req.method === undefined) {
     const range = encodeURIComponent('leaderboard!A2:F')
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`
@@ -187,7 +187,7 @@ export default async function handler(req: Req, res: Res): Promise<void> {
     return
   }
 
-  // POST — validate and append a new entry
+  // POST -- validate and append a new entry
   if (req.method === 'POST') {
     if (!checkRateLimit(getIp(req))) {
       res.status(429).json({ error: 'Too many submissions. Wait a minute and try again.' })
@@ -207,7 +207,7 @@ export default async function handler(req: Req, res: Res): Promise<void> {
       res.status(500).json({ error: 'Leaderboard write not configured' })
       return
     }
-    // Vercel stores the key with literal \n; replace them with real newlines for the crypto module.
+    // Vercel stores the key with literal \n characters; replace them with real newlines.
     const privateKey = rawKey.replace(/\\n/g, '\n')
 
     try {
