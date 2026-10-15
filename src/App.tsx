@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import Board from './components/Board.tsx'
 import type { BoardHandle } from './components/Board.tsx'
 import ChallengeModal from './components/ChallengeModal.tsx'
+import LeaderboardModal from './components/LeaderboardModal.tsx'
 import {
   BulbIcon,
   ExitFullscreenIcon,
@@ -107,6 +108,9 @@ export default function App() {
 
   // Consecutive correct answers without a mistake. Resets to 1 on any life loss.
   const [combo, setCombo] = useState(1)
+
+  // Controls whether the leaderboard modal is open on the game-over screen.
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false)
 
   // Run identity: set once per newGame, carried through level progression.
   // runId is used for leaderboard anti-cheat in step 6.

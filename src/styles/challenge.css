@@ -266,6 +266,104 @@
   color: var(--muted);
 }
 
+/* ── Leaderboard modal ───────────────────────────────────────────────────── */
+.leaderboard__title {
+  margin: 0 0 6px;
+  font-size: 1.3rem;
+}
+
+.leaderboard__summary {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.leaderboard__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leaderboard__input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-bottom: 2px solid var(--accent);
+  border-radius: 10px;
+  background: var(--board);
+  color: var(--text);
+  font-size: 1rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.leaderboard__input:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.leaderboard__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.leaderboard__loading {
+  padding: 32px 0;
+  text-align: center;
+  color: var(--muted);
+}
+
+.leaderboard__empty {
+  margin: 16px 0;
+  color: var(--muted);
+}
+
+.leaderboard__error {
+  margin: 8px 0 16px;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.leaderboard__scroll {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+
+.leaderboard__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.leaderboard__table th,
+.leaderboard__table td {
+  padding: 6px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.leaderboard__table th {
+  background: var(--board);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.leaderboard__table tr + tr td {
+  border-top: 1px solid var(--line);
+}
+
+.leaderboard__row--mine td {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  font-weight: 700;
+}
+
 @media (max-width: 520px) {
   .challenge {
     padding: 14px 12px;
