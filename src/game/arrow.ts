@@ -11,10 +11,11 @@ export function directionBetween(from: Cell, to: Cell): Direction {
 }
 
 // Builds an arrow from a tail to head list of cells. The direction comes from the last segment.
-export function makeArrow(id: string, cells: Cell[]): Arrow {
+// color is optional; omitting it falls back to the CSS --ink variable at render time.
+export function makeArrow(id: string, cells: Cell[], color = ''): Arrow {
   if (cells.length < 2) throw new Error('An arrow needs at least two cells')
   for (let i = 1; i < cells.length; i++) directionBetween(cells[i - 1], cells[i])
-  return { id, cells, dir: directionBetween(cells[cells.length - 2], cells[cells.length - 1]) }
+  return { id, cells, dir: directionBetween(cells[cells.length - 2], cells[cells.length - 1]), color }
 }
 
 export function headOf(arrow: Arrow): Cell {

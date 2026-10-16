@@ -30,3 +30,22 @@ export const EXIT_MAX_MS = 1100
 
 // How long the blocked message and the red highlight on the blocking arrow stay visible.
 export const FEEDBACK_MS = 1500
+
+// Flat color palette for arrows. Colors cycle through this list by snake number so all
+// four mirrored copies of a snake always share the same color.
+export const ARROW_PALETTE: readonly string[] = [
+  '#A855F7', // purple
+  '#5B4BE0', // indigo
+  '#2F6BEA', // blue
+  '#3B82F6', // light blue
+  '#0E9AB5', // teal
+  '#14B8A6', // mint
+  '#16A34A', // green
+  '#65A30D', // lime
+  '#F59E0B', // amber
+  '#CA8A04', // mustard
+  '#E11D2E', // red
+  '#E11D74', // hot pink
+  '#EC7FB0', // soft pink
+  '#C026A3', // magenta
+]

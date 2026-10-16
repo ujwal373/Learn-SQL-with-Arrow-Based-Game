@@ -13,6 +13,7 @@ export interface Arrow {
   id: string
   cells: Cell[]
   dir: Direction
+  color?: string
 }
 
 // An exiting arrow has already been cleared and is only playing its slide off animation,
