@@ -1,5 +1,6 @@
 import { makeArrow } from './arrow.ts'
 import { analyzeBoard } from './blocking.ts'
+import { ARROW_PALETTE } from './constants.ts'
 import { mulberry32 } from './rng.ts'
 import type { Arrow, Board, Cell } from './types.ts'
 
@@ -185,6 +186,7 @@ function buildBoard(config: LevelConfig, seed: number): Board | null {
 
   // Tries both head positions. Accepts the snake if all four mirrored copies have a clear path.
   function tryPlace(path: Cell[], snakeNumber: number): boolean {
+    const color = ARROW_PALETTE[(snakeNumber - 1) % ARROW_PALETTE.length]
     const reverseFirst = rand() < 0.5
     for (const reverse of [reverseFirst, !reverseFirst]) {
       // Reversing the cell order moves the head to the other end of the snake.
@@ -214,7 +216,7 @@ function buildBoard(config: LevelConfig, seed: number): Board | null {
       if (!clear) continue
 
       copies.forEach((cells, i) => {
-        arrows.push(makeArrow(`L${config.level}-${snakeNumber}-${i + 1}`, cells))
+        arrows.push(makeArrow(`L${config.level}-${snakeNumber}-${i + 1}`, cells, color))
         for (const cell of cells) occupied[cell.row * cols + cell.col] = 1
       })
       for (const cell of path) owner[cell.row][cell.col] = TAKEN

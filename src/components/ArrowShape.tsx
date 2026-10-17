@@ -63,9 +63,14 @@ function ArrowShape({ arrow, rows, cols, hinted, blocker, shakeClass, onActivate
     }
   }
 
+  // Remove inline color while shaking so the CSS shake class can set var(--danger).
+  const colorStyle: CSSProperties | undefined =
+    arrow.color && !shakeClass ? { color: arrow.color } : undefined
+
   return (
     <g
       className={classes.join(' ')}
+      style={colorStyle}
       data-arrow-id={exiting ? undefined : arrow.id}
       role="button"
       tabIndex={exiting ? -1 : 0}
@@ -78,7 +83,7 @@ function ArrowShape({ arrow, rows, cols, hinted, blocker, shakeClass, onActivate
       <g style={headStyle}>
         <polygon
           className="arrow__head"
-          points="0,-0.55 0.27,0.05 -0.27,0.05"
+          points="0,-0.58 0.3,0.08 -0.3,0.08"
           transform={`translate(${hx} ${hy}) rotate(${ROTATION[arrow.dir]})`}
         />
       </g>

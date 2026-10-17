@@ -8,7 +8,6 @@
   border-radius: 16px;
   border: 1px solid var(--line);
   background: var(--board);
-  /* The board handles its own touch gestures, so the page must not scroll or zoom instead. */
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
@@ -38,7 +37,8 @@
   gap: 6px;
 }
 
-/* Arrows */
+/* Arrows. The <g> color is set inline from arrow.color; currentColor on children picks it up.
+   While shaking, the inline color is removed so the shake class can apply var(--danger). */
 .arrow {
   color: var(--ink);
   outline: none;
@@ -48,7 +48,7 @@
 .arrow__line {
   fill: none;
   stroke: currentColor;
-  stroke-width: 0.3;
+  stroke-width: 0.35;
   stroke-linecap: round;
   stroke-linejoin: round;
   transition: stroke-width 120ms ease;
@@ -70,18 +70,18 @@
 .arrow__halo {
   fill: none;
   stroke: transparent;
-  stroke-width: 0.8;
+  stroke-width: 0.9;
   stroke-linecap: round;
   stroke-linejoin: round;
   pointer-events: none;
 }
 
 .arrow:hover .arrow__line {
-  stroke-width: 0.4;
+  stroke-width: 0.42;
 }
 
 .arrow:focus-visible .arrow__halo {
-  stroke: var(--ink);
+  stroke: currentColor;
   stroke-opacity: 0.25;
 }
 
@@ -96,7 +96,7 @@
   50% { stroke-opacity: 0.7; }
 }
 
-/* Blocked tap: the arrow that was tapped shakes and turns red, the arrow in its way gets a red glow. */
+/* Blocked tap: the tapped arrow turns to danger color; the blocker gets a red glow. */
 .arrow--blocker .arrow__halo {
   stroke: var(--danger);
   stroke-opacity: 0.45;
@@ -115,8 +115,8 @@
   animation: shake-b 400ms ease-in-out;
 }
 
-/* Two identical animations, so a repeat tap on the same arrow can restart the shake.
-   The distances are in grid units, because CSS pixels inside the SVG are grid units. */
+/* Two identical animations so a repeat tap on the same arrow restarts the shake.
+   Distances are in grid units (1 unit = 1 cell). */
 @keyframes shake-a {
   0%, 100% { transform: translateX(0); }
   20% { transform: translateX(-0.14px); }
@@ -133,7 +133,7 @@
   80% { transform: translateX(0.05px); }
 }
 
-/* Sliding off the board. The motion itself is set inline in ArrowShape.tsx. */
+/* Sliding off the board. Motion is set inline in ArrowShape.tsx. */
 .arrow--exiting {
   pointer-events: none;
 }
@@ -153,7 +153,6 @@
     transition: none;
   }
 
-  /* Cleared arrows simply disappear instead of sliding. */
   .arrow--exiting,
   .arrow--exiting * {
     transition: none !important;

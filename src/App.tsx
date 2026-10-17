@@ -7,9 +7,9 @@ import {
   BulbIcon,
   ExitFullscreenIcon,
   FullscreenIcon,
+  GearIcon,
   HeartIcon,
   MoonIcon,
-  PauseIcon,
   PlayIcon,
   RestartIcon,
   SunIcon,
@@ -442,40 +442,33 @@ export default function App() {
   return (
     <main className="game">
       <header className="topbar">
-        <div className="topbar__side">
+        <div className="topbar__hearts" role="img" aria-label={`${lives} of ${LIVES_PER_GAME} lives left`}>
+          {Array.from({ length: LIVES_PER_GAME }, (_, i) => (
+            <HeartIcon key={i} filled={i < lives} />
+          ))}
+        </div>
+
+        <span className="topbar__lvl">LVL {game.level}</span>
+
+        <div className="topbar__actions">
           {canFullscreen && (
             <button
               type="button"
-              className="icon-btn"
+              className="icon-btn icon-btn--sm"
               onClick={toggleFullscreen}
               aria-label={isFullscreen ? 'Exit full screen' : 'Full screen'}
             >
               {isFullscreen ? <ExitFullscreenIcon /> : <FullscreenIcon />}
             </button>
           )}
-        </div>
-
-        <div className="topbar__center">
-          <span className="level-label">LEVEL {game.level}</span>
-          <div className="hearts" role="img" aria-label={`${lives} of ${LIVES_PER_GAME} lives left`}>
-            {Array.from({ length: LIVES_PER_GAME }, (_, i) => (
-              <HeartIcon key={i} filled={i < lives} />
-            ))}
-          </div>
-        </div>
-
-        <div className="topbar__side topbar__side--right">
-          <button type="button" className="icon-btn" onClick={restartLevel} aria-label="Restart level">
-            <RestartIcon />
-          </button>
           <button
             type="button"
-            className="icon-btn"
+            className="icon-btn icon-btn--sm"
             onClick={() => setPaused((p) => !p)}
             disabled={status !== 'playing'}
             aria-label={paused ? 'Resume' : 'Pause'}
           >
-            {paused ? <PlayIcon /> : <PauseIcon />}
+            {paused ? <PlayIcon /> : <GearIcon />}
           </button>
         </div>
       </header>
@@ -603,6 +596,10 @@ export default function App() {
           <span className="btn__badge">
             {freeHintsLeft > 0 ? `${freeHintsLeft} free` : `-${EXTRA_HINT_SCORE_COST}`}
           </span>
+        </button>
+
+        <button type="button" className="icon-btn" onClick={restartLevel} aria-label="Restart level">
+          <RestartIcon />
         </button>
 
         <button
