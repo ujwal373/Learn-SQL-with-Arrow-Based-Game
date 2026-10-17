@@ -12,8 +12,11 @@ import {
   MoonIcon,
   PlayIcon,
   RestartIcon,
+  SpeakerOffIcon,
+  SpeakerOnIcon,
   SunIcon,
 } from './components/icons.tsx'
+import { isSoundEnabled, playSound, setSoundEnabled } from './game/sound.ts'
 import { boundsOf } from './game/arrow.ts'
 import type { Bounds } from './game/arrow.ts'
 import { getBlocker, findHintArrow } from './game/blocking.ts'
@@ -111,6 +114,9 @@ export default function App() {
 
   // Controls whether the leaderboard modal is open on the game-over screen.
   const [leaderboardOpen, setLeaderboardOpen] = useState(false)
+
+  // Sound toggle. Initialized from localStorage via isSoundEnabled so it survives refresh.
+  const [soundOn, setSoundOn] = useState(isSoundEnabled)
 
   // Run identity: set once per newGame, carried through level progression.
   // runId is used for leaderboard anti-cheat in step 6.
@@ -281,6 +287,8 @@ export default function App() {
     setHintId(null)
 
     if (blocker) {
+      playSound('blocked')
+      navigator.vibrate?.(80)
       const livesLeft = Math.max(0, lives - BLOCKED_TAP_LIVES_LOST)
       nonce.current += 1
       setLives(livesLeft)
@@ -290,6 +298,7 @@ export default function App() {
         window.clearTimeout(feedbackTimer.current)
         setMessage(null)
         setFinalSeconds(elapsedSeconds())
+        playSound('gameOver')
         setStatus('gameover')
       } else {
         showMessage(
@@ -302,6 +311,7 @@ export default function App() {
     }
 
     // A free arrow: ask a SQL question. The arrow only leaves if the answer is right.
+    playSound('tap')
     setBlocked(null)
     openChallenge(id)
   }
@@ -344,11 +354,14 @@ export default function App() {
     const arrowId = challenge.arrowId
     setChallenge(null)
     if (correct) {
+      playSound('correct')
       fireArrow(arrowId)
       return
     }
 
     // Wrong answer: the arrow shakes, a life is lost, combo resets, and the next tap draws a new question.
+    playSound('wrong')
+    navigator.vibrate?.(120)
     const livesLeft = Math.max(0, lives - 1)
     nonce.current += 1
     setLives(livesLeft)
@@ -358,6 +371,7 @@ export default function App() {
       window.clearTimeout(feedbackTimer.current)
       setMessage(null)
       setFinalSeconds(elapsedSeconds())
+      playSound('gameOver')
       setStatus('gameover')
     } else {
       showMessage(`Wrong answer. You lost a life. ${livesLeft} left.`, 'danger', true)
@@ -376,6 +390,8 @@ export default function App() {
       setScore((s) => s + earned)
       return Math.min(c + 1, COMBO_CAP)
     })
+    playSound('slide')
+    if (combo > 2) playSound('combo', combo)
 
     setGame((g) => ({
       ...g,
@@ -387,7 +403,11 @@ export default function App() {
     const { durationMs } = getExitInfo(arrow, game.rows, game.cols)
     const timer = window.setTimeout(() => {
       setGame((g) => ({ ...g, arrows: g.arrows.filter((a) => a.id !== id) }))
-      if (isLast) setStatus('cleared')
+      if (isLast) {
+        playSound('levelUp')
+        navigator.vibrate?.([50, 30, 80])
+        setStatus('cleared')
+      }
     }, durationMs)
     exitTimers.current.push(timer)
   }
@@ -425,6 +445,14 @@ export default function App() {
 
     const head = pick.cells[pick.cells.length - 1]
     boardRef.current?.showCell(head.row, head.col)
+  }
+
+  function toggleSound() {
+    setSoundOn((prev) => {
+      const next = !prev
+      setSoundEnabled(next)
+      return next
+    })
   }
 
   function toggleFullscreen() {
@@ -600,6 +628,15 @@ export default function App() {
 
         <button type="button" className="icon-btn" onClick={restartLevel} aria-label="Restart level">
           <RestartIcon />
+        </button>
+
+        <button
+          type="button"
+          className="icon-btn"
+          onClick={toggleSound}
+          aria-label={soundOn ? 'Mute sounds' : 'Unmute sounds'}
+        >
+          {soundOn ? <SpeakerOnIcon /> : <SpeakerOffIcon />}
         </button>
 
         <button

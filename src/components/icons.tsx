@@ -90,6 +90,22 @@ export const MoonIcon = () => (
   </Icon>
 )
 
+export const SpeakerOnIcon = () => (
+  <Icon>
+    <path d="M11 5L6 9H2v6h4l5 4V5z" />
+    <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+    <path d="M19 5a10 10 0 0 1 0 14" />
+  </Icon>
+)
+
+export const SpeakerOffIcon = () => (
+  <Icon>
+    <path d="M11 5L6 9H2v6h4l5 4V5z" />
+    <line x1="23" y1="9" x2="17" y2="15" />
+    <line x1="17" y1="9" x2="23" y2="15" />
+  </Icon>
+)
+
 export const GearIcon = () => (
   <Icon>
     <circle cx="12" cy="12" r="3" />

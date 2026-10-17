@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { LeaderboardEntry } from '../storage/types.ts'
 import { sheetsStorage } from '../storage/sheetsStorage.ts'
 import type { ScoreSubmission } from '../storage/types.ts'
+import { useFocusTrap } from './useFocusTrap.ts'
 
 interface Props {
   score: number
@@ -25,6 +26,8 @@ export default function LeaderboardModal({ score, highestLevel, runSeconds, runI
   const [entries, setEntries] = useState<LeaderboardEntry[]>([])
   const [submittedName, setSubmittedName] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
+  const containerRef = useRef<HTMLDivElement>(null)
+  useFocusTrap(containerRef)
 
   async function loadBoard() {
     const board = await sheetsStorage.getLeaderboard(20)
@@ -62,7 +65,7 @@ export default function LeaderboardModal({ score, highestLevel, runSeconds, runI
 
   return (
     <div className="challenge-backdrop">
-      <div className="challenge leaderboard">
+      <div ref={containerRef} className="challenge leaderboard" role="dialog" aria-modal="true" aria-label="Leaderboard">
 
         {view === 'form' && (
           <>
